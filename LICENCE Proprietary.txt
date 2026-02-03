@@ -1,0 +1,14 @@
+Copyright (c) 2026 Kaloyan Rusev. All rights reserved.
+
+This software, including all source code, assets, models, and documentation,
+is the intellectual property of the author.
+
+You may NOT:
+
+- copy, distribute, or publicly display this software,
+- modify or create derivative works based on this software,
+- use this software for commercial purposes,
+
+without explicit written permission from the author.
+
+For inquiries or licensing requests, please contact: kaloyan.rusev.2007@abv.bg
