@@ -24,5 +24,3 @@ class User(BaseModel):
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
     
-test = User(username="Koki", email="koki@abv.bg", first_name= "Kaloyan", last_name= "Rusev", age=19 )
-print(test.get_full_name());

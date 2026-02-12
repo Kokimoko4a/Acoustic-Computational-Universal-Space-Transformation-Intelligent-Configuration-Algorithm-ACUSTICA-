@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACUSTICA | Passion for Sound</title>
+    <title>ACUSTICA | Присъедини се към ритъма</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,22 +24,22 @@
 
         body {
             background-color: var(--bg-passion);
-            /* Градиент, който придава "дълбочина" на лилавото */
             background-image: 
                 radial-gradient(circle at top right, #3d1252 0%, transparent 40%),
                 radial-gradient(circle at bottom left, #12051a 0%, transparent 40%);
-            height: 100vh;
+            min-height: 100vh; /* Променено на min-height за по-дълги форми */
             display: flex;
             justify-content: center;
             align-items: center;
             color: var(--text-gold);
+            padding: 40px 20px;
         }
 
-        .login-box {
+        .register-box {
             background: var(--card-purple);
             padding: 50px 40px;
             width: 100%;
-            max-width: 440px;
+            max-width: 500px; /* Малко по-широко за повече полета */
             border-radius: 24px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -48,8 +48,7 @@
             overflow: hidden;
         }
 
-        /* Декоративен елемент - червена "пулсация" */
-        .login-box::after {
+        .register-box::after {
             content: '';
             position: absolute;
             top: -50%;
@@ -65,7 +64,7 @@
             font-weight: 900;
             font-size: 2rem;
             letter-spacing: 3px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-transform: uppercase;
         }
 
@@ -77,15 +76,21 @@
         h2 {
             font-weight: 300;
             font-size: 1.4rem;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             letter-spacing: 1px;
         }
 
-        /* Полетата - лилави със "страстен" акцент */
+        /* Контейнер за две полета на един ред (за Име и Фамилия) */
+        .input-row {
+            display: flex;
+            gap: 15px;
+        }
+
         .input-group {
             text-align: left;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             position: relative;
+            flex: 1;
         }
 
         .input-group label {
@@ -99,12 +104,12 @@
 
         .input-group input {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: 0.3s;
         }
 
@@ -115,7 +120,6 @@
             box-shadow: 0 0 15px var(--glow-red);
         }
 
-        /* Бутонът - енергията на дизайна */
         .btn-passion {
             width: 100%;
             padding: 16px;
@@ -129,6 +133,7 @@
             transition: 0.4s;
             box-shadow: 0 10px 20px rgba(179, 30, 30, 0.4);
             text-transform: uppercase;
+            margin-top: 10px;
         }
 
         .btn-passion:hover {
@@ -137,13 +142,13 @@
             filter: brightness(1.1);
         }
 
-        .signup-text {
+        .login-link {
             margin-top: 30px;
             font-size: 0.9rem;
             color: rgba(253, 240, 213, 0.6);
         }
 
-        .signup-text a {
+        .login-link a {
             color: var(--hot-red);
             text-decoration: none;
             font-weight: 600;
@@ -151,21 +156,49 @@
             transition: 0.3s;
         }
 
-        .signup-text a:hover {
+        .login-link a:hover {
             border-bottom: 1px solid var(--hot-red);
+        }
+
+        /* Премахване на стрелките при полето за възраст */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
     </style>
 </head>
 <body>
 
-    <div class="login-box">
+    <div class="register-box">
         <div class="logo">ACU<span>STICA</span></div>
-        <h2>Усети ритъма на звука</h2>
+        <h2>Стани част от звука</h2>
 
         <form>
             <div class="input-group">
-                <label>Твоят имейл</label>
-                <input type="email" placeholder="hubavec@acustica.bg" required>
+                <label>Потребителско име</label>
+                <input type="text" placeholder="hubavec" required>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Първо име</label>
+                    <input type="text" placeholder="Калоян" required>
+                </div>
+                <div class="input-group">
+                    <label>Фамилия</label>
+                    <input type="text" placeholder="Русев" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Имейл адрес</label>
+                <input type="email" placeholder="hubavec@mail.bg" required>
+            </div>
+
+            <div class="input-group">
+                <label>Възраст</label>
+                <input type="number" placeholder="25" min="1" max="120" required>
             </div>
 
             <div class="input-group">
@@ -173,11 +206,11 @@
                 <input type="password" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="btn-passion">Влез в залата</button>
+            <button type="submit" class="btn-passion">Създай профил</button>
         </form>
 
-        <div class="signup-text">
-            Още не си част от нас? <a onclick="window.location = 'register.html' ">Регистрирай се</a>
+        <div class="login-link">
+            Вече имаш профил? <a onclick="window.location = 'login.html' ">Влез тук</a>
         </div>
     </div>
 
