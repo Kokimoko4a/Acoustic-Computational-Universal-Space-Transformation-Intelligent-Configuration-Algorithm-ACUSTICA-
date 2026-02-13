@@ -1,0 +1,5 @@
+flask
+pydantic[email]
+psycopg2
+bcrypt
+email-validator
