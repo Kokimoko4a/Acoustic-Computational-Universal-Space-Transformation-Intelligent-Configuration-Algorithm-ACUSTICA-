@@ -170,49 +170,104 @@
 </head>
 <body>
 
+    <!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACUSTICA | Присъедини се към ритъма</title>
+    </head>
+<body>
+
     <div class="register-box">
         <div class="logo">ACU<span>STICA</span></div>
         <h2>Стани част от звука</h2>
 
-        <form>
+        <form id="registerForm">
             <div class="input-group">
                 <label>Потребителско име</label>
-                <input type="text" placeholder="hubavec" required>
+                <input type="text" name="username" placeholder="hubavec" required>
             </div>
 
             <div class="input-row">
                 <div class="input-group">
                     <label>Първо име</label>
-                    <input type="text" placeholder="Калоян" required>
+                    <input type="text" name="first_name" placeholder="Калоян" required>
                 </div>
                 <div class="input-group">
                     <label>Фамилия</label>
-                    <input type="text" placeholder="Русев" required>
+                    <input type="text" name="last_name" placeholder="Русев" required>
                 </div>
             </div>
 
             <div class="input-group">
                 <label>Имейл адрес</label>
-                <input type="email" placeholder="hubavec@mail.bg" required>
+                <input type="email" name="email" placeholder="hubavec@mail.bg" required>
             </div>
 
             <div class="input-group">
                 <label>Възраст</label>
-                <input type="number" placeholder="25" min="1" max="120" required>
+                <input type="number" name="age" placeholder="25" min="1" max="120" required>
             </div>
 
             <div class="input-group">
                 <label>Парола</label>
-                <input type="password" placeholder="••••••••" required>
+                <input type="password" name="password" placeholder="••••••••" required>
             </div>
 
             <button type="submit" class="btn-passion">Създай профил</button>
         </form>
 
+        <div id="responseMessage" style="margin-top: 15px; font-size: 0.9rem;"></div>
+
         <div class="login-link">
-            Вече имаш профил? <a onclick="window.location = 'login.html' ">Влез тук</a>
+            Вече имаш профил? <a href="login.html">Влез тук</a>
         </div>
     </div>
+
+    <script>
+        const form = document.getElementById('registerForm');
+        const msg = document.getElementById('responseMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            msg.innerText = "Обработка...";
+
+            // 1. Събиране на данните
+            const formData = new FormData(form);
+            const jsonData = Object.fromEntries(formData.entries());
+
+            try {
+                // 2. Изпращане към Flask
+                const response = await fetch('http://127.0.0.1:5000/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(jsonData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // 3. Запазваме JWT токена в браузъра
+                    localStorage.setItem('acustica_token', result.access_token);
+                    msg.style.color = "#00FF00";
+                    msg.innerText = "Успешна регистрация! Пренасочване...";
+                    
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 2000);
+                } else {
+                    msg.style.color = "#ff3e3e";
+                    msg.innerText = "Грешка: " + (result.error || "Опитайте пак");
+                }
+            } catch (err) {
+                msg.style.color = "#ff3e3e";
+                msg.innerText = "Сървърът не отговаря.";
+            }
+        });
+    </script>
+</body>
+</html>
 
 </body>
 </html>

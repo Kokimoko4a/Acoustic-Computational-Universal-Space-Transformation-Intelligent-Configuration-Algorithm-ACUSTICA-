@@ -18,7 +18,9 @@ class User(BaseModel):
     last_name: str = Field(..., max_length=100)
 
     # [Required], [Range(1, 120)]
-    age: int = Field(..., gt=0, lt=120)
+    age: Optional[int] = None
+
+    
 
     # Пример за изчислено свойство (като Read-only Property в C#)
     def get_full_name(self) -> str:
