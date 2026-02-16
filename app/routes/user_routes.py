@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 import jwt
 import datetime
 # ПРЕМАХНИ "ACUSTICA.app" от началото
-from data.db_manager import create_user_in_db
+from data.db_manager import create_user_in_db, get_user_by_email, verify_password
 from models.User import User 
 import bcrypt
 
@@ -50,5 +50,33 @@ def register():
         "message": "Потребителят е създаден",
         "access_token": token
     }), 201
+
+@user_bp.route('/login', methods=['POST'])
+def login():
+
+    raw_data = request.get_json();
+    clean_data = {
+
+        "email" : raw_data.get("email"),
+        "password" : raw_data.get("password")
+    }
+
+    password_bytes = clean_data.password.encode('utf-16') 
+    salt = bcrypt.gensalt()
+    hashed_pw = bcrypt.hashpw(password_bytes, salt).decode('utf-8')
+
+    user = get_user_by_email(clean_data.email)
+    isValid = verify_password(clean_data.password,user.hashed_password)
+
+    if isValid:
+            return jsonify({"message": "Успешен вход!"}), 200
+    else:
+            return jsonify({"message": "Грешна парола!"}), 401
+    
+   
+        
+
+
+
     
     

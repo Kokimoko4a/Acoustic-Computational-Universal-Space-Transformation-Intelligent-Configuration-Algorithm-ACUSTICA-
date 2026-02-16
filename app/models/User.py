@@ -20,6 +20,8 @@ class User(BaseModel):
     # [Required], [Range(1, 120)]
     age: Optional[int] = None
 
+    hashed_password: str = Field(..., max_length= 256)
+
     
 
     # Пример за изчислено свойство (като Read-only Property в C#)

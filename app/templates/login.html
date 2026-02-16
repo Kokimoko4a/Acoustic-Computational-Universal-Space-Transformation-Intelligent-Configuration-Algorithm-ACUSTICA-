@@ -182,4 +182,36 @@
     </div>
 
 </body>
+
+<script>
+    document.querySelector('form').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Спираме презареждането на страницата
+
+        const email = e.target.querySelectorAll('input')[0].value;
+        const password = e.target.querySelectorAll('input')[1].value;
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Добре дошъл отново в ACUSTICA!');
+                localStorage.setItem('token', data.token); // Запазваме JWT токена
+                window.location.href = 'dashboard.html'; // Пренасочване
+            } else {
+                alert('Грешка: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Сървърът не отговаря. Провери дали Flask е пуснат!');
+        }
+    });
+</script>
 </html>
