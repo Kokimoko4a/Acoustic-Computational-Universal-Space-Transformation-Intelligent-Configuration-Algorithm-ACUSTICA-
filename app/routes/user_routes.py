@@ -21,6 +21,7 @@ def register():
         "first_name": raw_data.get("first_name"),
         "last_name": raw_data.get("last_name"),
         "age": raw_data.get("age")
+        
     }
 
     password_raw = raw_data.pop('password', None)
@@ -61,12 +62,15 @@ def login():
         "password" : raw_data.get("password")
     }
 
-    password_bytes = clean_data.password.encode('utf-16') 
+    password_bytes = clean_data['password'].encode('utf-16') 
     salt = bcrypt.gensalt()
     hashed_pw = bcrypt.hashpw(password_bytes, salt).decode('utf-8')
 
-    user = get_user_by_email(clean_data.email)
-    isValid = verify_password(clean_data.password,user.hashed_password)
+    user = get_user_by_email(clean_data['email'])
+
+    
+
+    isValid = verify_password(clean_data['password'],user['password_hash'])
 
     if isValid:
             return jsonify({"message": "Успешен вход!"}), 200
