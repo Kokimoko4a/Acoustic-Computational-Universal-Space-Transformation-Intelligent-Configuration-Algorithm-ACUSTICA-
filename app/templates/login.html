@@ -203,8 +203,8 @@
 
             if (response.ok) {
                 alert('Добре дошъл отново в ACUSTICA!');
-                localStorage.setItem('token', data.token); // Запазваме JWT токена
-                window.location.href = 'dashboard.html'; // Пренасочване
+                localStorage.setItem('access_token', data.access_token); // Запазваме JWT токена
+                window.location.href = 'http://127.0.0.1:5500/ACUSTICA/app/templates/index.html'; // Пренасочване
             } else {
                 alert('Грешка: ' + data.message);
             }

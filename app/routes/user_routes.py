@@ -62,20 +62,31 @@ def login():
         "password" : raw_data.get("password")
     }
 
-    password_bytes = clean_data['password'].encode('utf-16') 
-    salt = bcrypt.gensalt()
-    hashed_pw = bcrypt.hashpw(password_bytes, salt).decode('utf-8')
+
 
     user = get_user_by_email(clean_data['email'])
 
-    
+    hashed_password_from_db_as_bytes = user['password_hash'].encode('utf-8')
 
-    isValid = verify_password(clean_data['password'],user['password_hash'])
+    input_password_bytes = clean_data['password'].encode('utf-16')
 
-    if isValid:
-            return jsonify({"message": "Успешен вход!"}), 200
+    test = user['id']
+
+    if bcrypt.checkpw(input_password_bytes, hashed_password_from_db_as_bytes):
+        # Паролата е вярна! Генерираш JWT токен
+        payload = {
+            'user_id': user['id'],
+            'exp': datetime.datetime.now() + datetime.timedelta(hours=24)
+        }
+        token = jwt.encode(payload, "19012007", algorithm='HS256')
+        
+        return jsonify({
+            "message": "Успешен вход",
+            "access_token": token
+        }), 200
     else:
-            return jsonify({"message": "Грешна парола!"}), 401
+        # Грешна парола
+        return jsonify({"message": "Невалидни данни за достъп"}), 401
     
    
         

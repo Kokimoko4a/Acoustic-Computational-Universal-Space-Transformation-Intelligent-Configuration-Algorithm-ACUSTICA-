@@ -162,16 +162,23 @@
         }
     </style>
 </head>
+
+
+
+
 <body>
+
+
+    
 
     <header>
         <div class="logo">ACU<span>STICA</span></div>
-        <nav>
-            <a href="#">Dashboard</a>
-            <a href="#">Scenes</a>
-            <a href="#">Profile</a>
-            <a href="#" onclick="window.location = 'login.html'" style="color: var(--accent-red);">Log in/Sign up</a>
-        </nav>
+        <nav id="nav-menu">
+    <a href="#">Dashboard</a>
+    <a href="#">Scenes</a>
+    <a href="#">Profile</a>
+    <span id="auth-buttons"></span>
+</nav>
     </header>
 
     <section class="hero">
@@ -199,5 +206,38 @@
         &copy; 2026 ACUSTICA SYSTEM. DESIGNED FOR AUDIO PROFESSIONALS.
     </footer>
 
+<script>
+    function updateNavigation() {
+        const authContainer = document.getElementById('auth-buttons');
+        const token = localStorage.getItem('access_token'); // Увери се, че името съвпада с това при Login
+
+        if (token) {
+            // Ако има токен - показваме Logout
+            authContainer.innerHTML = `
+                <a href="#" id="logout-btn" style="color: var(--accent-red);">Log Out</a>
+            `;
+            
+            // Логика за излизане
+            document.getElementById('logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('access_token'); // Изтриваме токена
+                window.location.reload(); // Презареждаме страницата
+            });
+        } else {
+            // Ако няма токен - показваме Login/Sign up
+            authContainer.innerHTML = `
+                <a href="login.html" style="color: var(--accent-red);">Log in/Sign up</a>
+            `;
+        }
+    }
+
+    // Извикваме функцията веднага щом страницата зареди
+    document.addEventListener('DOMContentLoaded', updateNavigation);
+</script>
+
 </body>
+
+
+
+
 </html>
