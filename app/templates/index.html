@@ -7,13 +7,13 @@
     <style>
         /* ПАЛИТРА: Crimson Red & Deep Space */
         :root {
-            --accent-red: #e63946;    /* Ярко червено за акцент */
-            --dark-red: #a8222e;      /* Тъмно червено за ховър ефекти */
-            --bg-deep: #121212;       /* Дълбоко черно */
-            --bg-card: #1e1e1e;       /* Сиво-черно за карти */
-            --text-main: #ffffff;     /* Чисто бяло */
-            --text-dim: #b0b0b0;      /* Сиво за текст */
-            --border-gray: #333333;   /* Граници */
+            --accent-red: #e63946;
+            --dark-red: #a8222e;
+            --bg-deep: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #ffffff;
+            --text-dim: #b0b0b0;
+            --border-gray: #333333;
         }
 
         * {
@@ -54,6 +54,11 @@
             color: var(--accent-red);
         }
 
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
         nav a {
             color: var(--text-dim);
             text-decoration: none;
@@ -69,6 +74,11 @@
             color: var(--accent-red);
         }
 
+        /* Скриване на елементи по подразбиране */
+        .auth-only {
+            display: none;
+        }
+
         /* Hero Секция */
         .hero {
             height: 100vh;
@@ -78,7 +88,7 @@
             align-items: center;
             text-align: center;
             background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)), 
-                        url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); /* Дискретен аудио фон */
+                        url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
             background-size: cover;
             padding: 0 20px;
         }
@@ -88,6 +98,10 @@
             margin-bottom: 15px;
             font-weight: 900;
             letter-spacing: -2px;
+        }
+
+        .hero h1 span {
+            color: var(--accent-red);
         }
 
         .hero p {
@@ -100,7 +114,7 @@
         /* Бутони */
         .btn {
             padding: 15px 40px;
-            border-radius: 4px; /* По-квадратни за професионален вид */
+            border-radius: 4px;
             text-decoration: none;
             font-weight: bold;
             text-transform: uppercase;
@@ -152,7 +166,6 @@
             color: var(--text-dim);
         }
 
-        /* Footer */
         footer {
             padding: 40px;
             text-align: center;
@@ -162,23 +175,16 @@
         }
     </style>
 </head>
-
-
-
-
 <body>
-
-
-    
 
     <header>
         <div class="logo">ACU<span>STICA</span></div>
         <nav id="nav-menu">
-    <a href="#">Dashboard</a>
-    <a href="#">Scenes</a>
-    <a href="#">Profile</a>
-    <span id="auth-buttons"></span>
-</nav>
+            <a href="dashboard.html" class="auth-only">Dashboard</a>
+            <a href="scenes.html" class="auth-only">Scenes</a>
+            <a href="profile.html" class="auth-only">Profile</a>
+            <span id="auth-buttons"></span>
+        </nav>
     </header>
 
     <section class="hero">
@@ -209,35 +215,40 @@
 <script>
     function updateNavigation() {
         const authContainer = document.getElementById('auth-buttons');
-        const token = localStorage.getItem('access_token'); // Увери се, че името съвпада с това при Login
+        const authLinks = document.querySelectorAll('.auth-only');
+        const token = localStorage.getItem('access_token');
 
         if (token) {
-            // Ако има токен - показваме Logout
+            // 1. Показваме всички защитени линкове
+            authLinks.forEach(link => {
+                link.style.display = 'inline-block';
+            });
+
+            // 2. Показваме Logout бутон
             authContainer.innerHTML = `
                 <a href="#" id="logout-btn" style="color: var(--accent-red);">Log Out</a>
             `;
             
-            // Логика за излизане
             document.getElementById('logout-btn').addEventListener('click', function(e) {
                 e.preventDefault();
-                localStorage.removeItem('access_token'); // Изтриваме токена
-                window.location.reload(); // Презареждаме страницата
+                localStorage.removeItem('access_token');
+                window.location.reload();
             });
         } else {
-            // Ако няма токен - показваме Login/Sign up
+            // 1. Скриваме всички защитени линкове
+            authLinks.forEach(link => {
+                link.style.display = 'none';
+            });
+
+            // 2. Показваме Login бутон
             authContainer.innerHTML = `
                 <a href="login.html" style="color: var(--accent-red);">Log in/Sign up</a>
             `;
         }
     }
 
-    // Извикваме функцията веднага щом страницата зареди
     document.addEventListener('DOMContentLoaded', updateNavigation);
 </script>
 
 </body>
-
-
-
-
 </html>
