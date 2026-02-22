@@ -7,238 +7,201 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* ПАЛИТРА: Страстно лилаво и горещо червено */
-            --bg-passion: #1e0b26;      /* Дълбоко лилаво (основа) */
-            --card-purple: #2d133a;     /* По-светло лилаво за формата */
-            --hot-red: #ff3e3e;         /* Страстно червено */
+            --bg-passion: #1e0b26;
+            --card-purple: #2d133a;
+            --hot-red: #ff3e3e;
             --glow-red: rgba(255, 62, 62, 0.4);
-            --text-gold: #fdf0d5;       /* Меко, шампанско бяло за текст */
+            --text-gold: #fdf0d5;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
 
         body {
             background-color: var(--bg-passion);
             background-image: 
                 radial-gradient(circle at top right, #3d1252 0%, transparent 40%),
                 radial-gradient(circle at bottom left, #12051a 0%, transparent 40%);
-            min-height: 100vh; /* Променено на min-height за по-дълги форми */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-gold);
-            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            color: var(--text-gold); padding: 40px 20px; overflow-x: hidden;
         }
 
         .register-box {
             background: var(--card-purple);
             padding: 50px 40px;
-            width: 100%;
-            max-width: 500px; /* Малко по-широко за повече полета */
+            width: 100%; max-width: 500px;
             border-radius: 24px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.05);
             text-align: center;
             position: relative;
-            overflow: hidden;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .register-box::after {
-            content: '';
+        /* --- MISTY ANIMATION LAYER --- */
+        #success-layer {
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, var(--glow-red) 0%, transparent 70%);
-            opacity: 0.2;
-            pointer-events: none;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--card-purple);
+            border-radius: 24px;
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 10;
         }
 
-        .logo {
-            font-weight: 900;
-            font-size: 2rem;
-            letter-spacing: 3px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
+        .mist-circle {
+            width: 15px; height: 15px;
+            background: var(--hot-red);
+            border-radius: 50%;
+            box-shadow: 0 0 40px 25px var(--glow-red);
+            animation: mist-glow 3s infinite ease-in-out;
         }
 
-        .logo span {
-            color: var(--hot-red);
-            text-shadow: 0 0 15px var(--hot-red);
+        @keyframes mist-glow {
+            0%, 100% { transform: scale(1); opacity: 0.4; filter: blur(5px); }
+            50% { transform: scale(2.5); opacity: 0.8; filter: blur(15px); }
         }
 
-        h2 {
-            font-weight: 300;
-            font-size: 1.4rem;
-            margin-bottom: 35px;
-            letter-spacing: 1px;
-        }
+        .fade-out { opacity: 0; transform: translateY(10px); pointer-events: none; transition: 0.8s; }
+        /* ---------------------------- */
 
-        /* Контейнер за две полета на един ред (за Име и Фамилия) */
-        .input-row {
-            display: flex;
-            gap: 15px;
-        }
+        .logo { font-weight: 900; font-size: 2rem; letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
+        .logo span { color: var(--hot-red); text-shadow: 0 0 15px var(--hot-red); }
 
-        .input-group {
-            text-align: left;
-            margin-bottom: 20px;
-            position: relative;
-            flex: 1;
-        }
+        h2 { font-weight: 300; font-size: 1.4rem; margin-bottom: 35px; letter-spacing: 1px; }
 
+        .input-row { display: flex; gap: 15px; }
+
+        .input-group { text-align: left; margin-bottom: 20px; flex: 1; }
         .input-group label {
-            font-size: 0.75rem;
-            color: var(--hot-red);
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
+            font-size: 0.75rem; color: var(--hot-red);
+            text-transform: uppercase; font-weight: 600;
+            margin-bottom: 8px; display: block;
         }
 
         .input-group input {
-            width: 100%;
-            padding: 14px;
+            width: 100%; padding: 14px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: white;
-            font-size: 0.95rem;
-            transition: 0.3s;
+            border-radius: 12px; color: white;
+            font-size: 0.95rem; transition: 0.3s;
         }
 
         .input-group input:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.07);
-            border-color: var(--hot-red);
-            box-shadow: 0 0 15px var(--glow-red);
+            outline: none; background: rgba(255, 255, 255, 0.07);
+            border-color: var(--hot-red); box-shadow: 0 0 15px var(--glow-red);
         }
 
         .btn-passion {
-            width: 100%;
-            padding: 16px;
+            width: 100%; padding: 16px;
             background: linear-gradient(135deg, var(--hot-red) 0%, #b31e1e 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.4s;
+            color: white; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 600;
+            cursor: pointer; transition: 0.4s;
             box-shadow: 0 10px 20px rgba(179, 30, 30, 0.4);
-            text-transform: uppercase;
-            margin-top: 10px;
+            text-transform: uppercase; margin-top: 10px;
         }
 
-        .btn-passion:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(255, 62, 62, 0.5);
-            filter: brightness(1.1);
-        }
+        .btn-passion:hover { transform: translateY(-3px); filter: brightness(1.1); }
 
-        .login-link {
-            margin-top: 30px;
-            font-size: 0.9rem;
-            color: rgba(253, 240, 213, 0.6);
-        }
+        .login-link { margin-top: 30px; font-size: 0.9rem; color: rgba(253, 240, 213, 0.6); }
+        .login-link a { color: var(--hot-red); text-decoration: none; font-weight: 600; }
 
-        .login-link a {
-            color: var(--hot-red);
-            text-decoration: none;
-            font-weight: 600;
-            border-bottom: 1px solid transparent;
-            transition: 0.3s;
-        }
-
-        .login-link a:hover {
-            border-bottom: 1px solid var(--hot-red);
-        }
-
-        /* Премахване на стрелките при полето за възраст */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
 <body>
 
-    <!DOCTYPE html>
-<html lang="bg">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACUSTICA | Присъедини се към ритъма</title>
-    </head>
-<body>
+    <div class="register-box" id="registerBox">
+        <div id="success-layer">
+            <div class="mist-circle"></div>
+            <p style="margin-top: 40px; letter-spacing: 8px; font-weight: 300; font-size: 1.1rem; color: var(--text-gold);">RESONANCE INITIALIZED</p>
+        </div>
 
-    <div class="register-box">
-        <div class="logo">ACU<span>STICA</span></div>
-        <h2>Стани част от звука</h2>
+        <div id="main-content">
+            <div class="logo">ACU<span>STICA</span></div>
+            <h2>Стани част от звука</h2>
 
-        <form id="registerForm">
-            <div class="input-group">
-                <label>Потребителско име</label>
-                <input type="text" name="username" placeholder="hubavec" required>
-            </div>
-
-            <div class="input-row">
+            <form id="registerForm">
                 <div class="input-group">
-                    <label>Първо име</label>
-                    <input type="text" name="first_name" placeholder="Калоян" required>
+                    <label>Потребителско име</label>
+                    <input type="text" name="username" placeholder="hubavec" required>
                 </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Първо име</label>
+                        <input type="text" name="first_name" placeholder="Калоян" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Фамилия</label>
+                        <input type="text" name="last_name" placeholder="Русев" required>
+                    </div>
+                </div>
+
                 <div class="input-group">
-                    <label>Фамилия</label>
-                    <input type="text" name="last_name" placeholder="Русев" required>
+                    <label>Имейл адрес</label>
+                    <input type="email" name="email" placeholder="hubavec@mail.bg" required>
                 </div>
+
+                <div class="input-group">
+                    <label>Възраст</label>
+                    <input type="number" name="age" placeholder="25" min="1" max="120" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Парола</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-passion" id="submitBtn">Създай профил</button>
+            </form>
+
+            <div id="responseMessage" style="margin-top: 15px; font-size: 0.9rem;"></div>
+
+            <div class="login-link">
+                Вече имаш профил? <a href="login.html">Влез тук</a>
             </div>
-
-            <div class="input-group">
-                <label>Имейл адрес</label>
-                <input type="email" name="email" placeholder="hubavec@mail.bg" required>
-            </div>
-
-            <div class="input-group">
-                <label>Възраст</label>
-                <input type="number" name="age" placeholder="25" min="1" max="120" required>
-            </div>
-
-            <div class="input-group">
-                <label>Парола</label>
-                <input type="password" name="password" placeholder="••••••••" required>
-            </div>
-
-            <button type="submit" class="btn-passion">Създай профил</button>
-        </form>
-
-        <div id="responseMessage" style="margin-top: 15px; font-size: 0.9rem;"></div>
-
-        <div class="login-link">
-            Вече имаш профил? <a href="login.html">Влез тук</a>
         </div>
     </div>
 
     <script>
+        // --- JAZZ AUDIO ENGINE ---
+        function playMistyJazz() {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            function playNote(freq, startTime, duration, vol) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, startTime);
+                osc.frequency.exponentialRampToValueAtTime(freq + 2, startTime + duration);
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(vol, startTime + 0.2);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            }
+            const now = audioCtx.currentTime;
+            playNote(311.13, now, 2.5, 0.15);      
+            playNote(392.00, now + 0.4, 2.2, 0.1);  
+            playNote(466.16, now + 0.8, 1.8, 0.08); 
+        }
+
         const form = document.getElementById('registerForm');
         const msg = document.getElementById('responseMessage');
+        const submitBtn = document.getElementById('submitBtn');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            msg.innerText = "Обработка...";
+            submitBtn.innerText = "ОБРАБОТКА...";
+            submitBtn.disabled = true;
 
-            // 1. Събиране на данните
             const formData = new FormData(form);
             const jsonData = Object.fromEntries(formData.entries());
 
             try {
-                // 2. Изпращане към Flask
                 const response = await fetch('http://127.0.0.1:5000/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -248,26 +211,35 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    // 3. Запазваме JWT токена в браузъра
-                    localStorage.setItem('acustica_token', result.access_token);
-                    msg.style.color = "#00FF00";
-                    msg.innerText = "Успешна регистрация! Пренасочване...";
-                    
+                    // СТАРТИРАНЕ НА ЕФЕКТИТЕ
+                    playMistyJazz();
+                    document.getElementById('main-content').classList.add('fade-out');
+
                     setTimeout(() => {
-                        window.location.href = 'http://127.0.0.1:5500/ACUSTICA/app/templates/index.html';
-                    }, 2000);
+                        document.getElementById('main-content').style.display = 'none';
+                        document.getElementById('success-layer').style.display = 'flex';
+                        // Свиваме кутията до перфектен квадрат за анимацията
+                        document.getElementById('registerBox').style.maxWidth = '400px';
+                        document.getElementById('registerBox').style.height = '400px';
+                    }, 800);
+
+                    localStorage.setItem('access_token', result.access_token);
+
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 4500);
                 } else {
                     msg.style.color = "#ff3e3e";
                     msg.innerText = "Грешка: " + (result.error || "Опитайте пак");
+                    submitBtn.innerText = "СЪЗДАЙ ПРОФИЛ";
+                    submitBtn.disabled = false;
                 }
             } catch (err) {
                 msg.style.color = "#ff3e3e";
                 msg.innerText = "Сървърът не отговаря.";
+                submitBtn.disabled = false;
             }
         });
     </script>
-</body>
-</html>
-
 </body>
 </html>

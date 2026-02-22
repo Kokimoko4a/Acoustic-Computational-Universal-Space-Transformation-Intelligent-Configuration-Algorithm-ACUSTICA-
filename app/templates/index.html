@@ -180,7 +180,7 @@
     <header>
         <div class="logo">ACU<span>STICA</span></div>
         <nav id="nav-menu">
-            <a href="dashboard.html" class="auth-only">Dashboard</a>
+            <a href="index.html" class="auth-only">Home</a>
             <a href="scenes.html" class="auth-only">Scenes</a>
             <a href="profile.html" class="auth-only">Profile</a>
             <span id="auth-buttons"></span>
@@ -232,7 +232,7 @@
             document.getElementById('logout-btn').addEventListener('click', function(e) {
                 e.preventDefault();
                 localStorage.removeItem('access_token');
-                window.location.reload();
+                window.location.replace('index.html');;
             });
         } else {
             // 1. Скриваме всички защитени линкове
