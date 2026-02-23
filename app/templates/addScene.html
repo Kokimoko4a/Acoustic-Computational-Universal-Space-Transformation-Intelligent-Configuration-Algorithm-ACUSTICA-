@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACUSTICA | Create Scene</title>
+    <style>
+        /* ПАЛИТРАТА ОТ ОРИГИНАЛА */
+        :root {
+            --accent-red: #e63946;
+            --dark-red: #a8222e;
+            --bg-deep: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #ffffff;
+            --text-dim: #b0b0b0;
+            --border-gray: #333333;
+            --input-bg: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-top: 100px; /* Място за фиксирания хедър */
+        }
+
+        /* ОРИГИНАЛЕН ХЕДЪР (ЗАПАЗЕН) */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(18, 18, 18, 0.95);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--accent-red);
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        .logo span { color: var(--accent-red); }
+
+        nav { display: flex; align-items: center; }
+
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        nav a:hover { color: var(--accent-red); }
+
+        .auth-only { display: none; } /* Скрити по подразбиране */
+
+        /* ДИЗАЙН НА ФОРМАТА */
+        .form-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 4px;
+            border-left: 4px solid var(--accent-red);
+        }
+
+        .form-header { margin-bottom: 30px; }
+        .form-header h1 { font-size: 2rem; font-weight: 900; }
+        .form-header h1 span { color: var(--accent-red); }
+
+        .section-title {
+            font-size: 0.9rem;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 30px 0 15px 0;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-gray);
+            padding-bottom: 5px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        input[type="text"], 
+        input[type="number"], 
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-red);
+        }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* CUSTOM FILE UPLOAD */
+        .file-drop-zone {
+            border: 2px dashed var(--border-gray);
+            padding: 30px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(255,255,255,0.02);
+        }
+        .file-drop-zone:hover { border-color: var(--accent-red); }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: var(--dark-red);
+            transform: translateY(-2px);
+        }
+
+        footer {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">ACU<span>STICA</span></div>
+        <nav id="nav-menu">
+            <a href="index.html" class="auth-only">Home</a>
+            <a href="scenes.html" class="auth-only">Scenes</a>
+            <a href="profile.html" class="auth-only">Profile</a>
+            <span id="auth-buttons"></span>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>НОВА <span>СЦЕНА</span></h1>
+                <p style="color: var(--text-dim)">Конфигурирай параметрите на акустичния модел.</p>
+            </div>
+
+            <form id="sceneForm">
+                <div class="section-title">Основна информация</div>
+                
+                <div class="form-group">
+                    <label>Име на проекта (Scene Label)</label>
+                    <input type="text" id="scene_label" placeholder="Напр. Main Control Room" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Цел на сцената (Purpose)</label>
+                    <input type="text" id="purpose" placeholder="Напр. Смесване на вокали, Домашно кино...">
+                </div>
+
+                <div class="form-group">
+                    <label>Аудио файл</label>
+                    <div class="file-drop-zone" onclick="document.getElementById('audio_file').click()">
+                        <span id="file-name">Избери аудио файл (.wav, .mp3)</span>
+                        <input type="file" id="audio_file" hidden accept="audio/*" required>
+                    </div>
+                </div>
+
+                <div class="section-title">Акустични параметри (Room Settings)</div>
+
+                <div class="form-group">
+                    <label>Материали (Свободен текст)</label>
+                    <textarea id="materials" rows="2" placeholder="Напр. Тухла, стъкло, басови капани..."></textarea>
+                </div>
+
+                <div class="grid-row">
+                    <div class="form-group">
+                        <label>RT60 (Време в сек.)</label>
+                        <input type="number" id="rt60" step="0.01" placeholder="0.45">
+                    </div>
+                    <div class="form-group">
+                        <label>Площ (m²)</label>
+                        <input type="number" id="room_size" placeholder="30">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Генерирай Сцена</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2026 ACUSTICA SYSTEM. DESIGNED FOR AUDIO PROFESSIONALS.
+    </footer>
+
+<script>
+    // ОРИГИНАЛНАТА ЛОГИКА ЗА НАВИГАЦИЯТА
+    function updateNavigation() {
+        const authContainer = document.getElementById('auth-buttons');
+        const authLinks = document.querySelectorAll('.auth-only');
+        const token = localStorage.getItem('access_token');
+
+        if (token) {
+            authLinks.forEach(link => link.style.display = 'inline-block');
+            authContainer.innerHTML = `<a href="#" id="logout-btn" style="color: var(--accent-red);">Log Out</a>`;
+            document.getElementById('logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('access_token');
+                window.location.replace('index.html');
+            });
+        } else {
+            authLinks.forEach(link => link.style.display = 'none');
+            authContainer.innerHTML = `<a href="login.html" style="color: var(--accent-red);">Log in/Sign up</a>`;
+        }
+    }
+
+    // ЛОГИКА ЗА ФОРМАТА
+    document.getElementById('audio_file').addEventListener('change', function() {
+        if(this.files[0]) document.getElementById('file-name').innerText = "Избран: " + this.files[0].name;
+    });
+
+    document.getElementById('sceneForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Това е твоят Pydantic обект
+        const payload = {
+            scene_label: document.getElementById('scene_label').value,
+            room_settings: {
+                purpose: document.getElementById('purpose').value,
+                materials: document.getElementById('materials').value,
+                rt60: document.getElementById('rt60').value,
+                size: document.getElementById('room_size').value
+            }
+        };
+
+        console.log("Изпращане на данни:", payload);
+        alert("Данните са събрани! Готови за API-то.");
+    });
+
+    document.addEventListener('DOMContentLoaded', updateNavigation);
+</script>
+
+</body>
+</html>
