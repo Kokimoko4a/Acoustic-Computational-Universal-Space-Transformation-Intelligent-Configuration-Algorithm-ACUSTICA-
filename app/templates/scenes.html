@@ -196,28 +196,12 @@
                 <p style="color: var(--accent-red); font-weight: bold; font-size: 0.8rem;">WORKSPACES</p>
                 <h1>My <span>Scenes</span></h1>
             </div>
-            <button class="btn-add">+ New Scene</button>
+            <button onclick="window.location.href='addScene.html'" class="btn-add">+ New Scene</button>
         </div>
 
-        <div class="scenes-grid" id="scenes-grid">
-            <div class="scene-card">
-                <h3>Vocal Booth A</h3>
-                <p>High-end isolation environment for lead vocals modeling.</p>
-                <div class="scene-meta">
-                    <span>RT60: 0.25s</span>
-                    <span>Active</span>
-                </div>
-            </div>
+        
 
-            <div class="scene-card">
-                <h3>Concert Hall</h3>
-                <p>Large scale simulation with multiple reflection points.</p>
-                <div class="scene-meta">
-                    <span>RT60: 1.8s</span>
-                    <span>Draft</span>
-                </div>
-            </div>
-        </div>
+            
 
         <div class="empty-state" id="empty-state" style="display: none;">
             <p>You haven't modeled any acoustic scenes yet.</p>
