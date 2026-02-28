@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 import jwt
 import datetime
-# ПРЕМАХНИ "ACUSTICA.app" от началото
 from data.db_manager import create_user_in_db, get_user_by_email, verify_password
 from models.User import User 
 import bcrypt

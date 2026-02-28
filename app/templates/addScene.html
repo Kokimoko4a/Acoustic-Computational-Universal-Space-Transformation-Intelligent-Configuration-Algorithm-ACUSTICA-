@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACUSTICA | Create Scene</title>
+    <title>ACUSTICA | AI Scene Design</title>
     <style>
-        /* ПАЛИТРАТА ОТ ОРИГИНАЛА */
         :root {
             --accent-red: #e63946;
             --dark-red: #a8222e;
@@ -15,157 +14,85 @@
             --text-dim: #b0b0b0;
             --border-gray: #333333;
             --input-bg: #1a1a1a;
+            --glow-red: rgba(230, 57, 70, 0.4);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, sans-serif;
+        @keyframes pageReveal {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
         body {
             background-color: var(--bg-deep);
             color: var(--text-main);
-            line-height: 1.6;
-            padding-top: 100px; /* Място за фиксирания хедър */
+            padding-top: 100px;
+            animation: pageReveal 0.8s ease-out forwards;
         }
 
-        /* ОРИГИНАЛЕН ХЕДЪР (ЗАПАЗЕН) */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 8%;
-            background: rgba(18, 18, 18, 0.95);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 8%; background: rgba(18, 18, 18, 0.95);
+            position: fixed; width: 100%; top: 0; z-index: 1000;
             border-bottom: 2px solid var(--accent-red);
+            backdrop-filter: blur(10px);
         }
 
-        .logo {
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--text-main);
-            text-transform: uppercase;
-        }
-
+        .logo { font-size: 1.6rem; font-weight: 900; text-transform: uppercase; }
         .logo span { color: var(--accent-red); }
 
-        nav { display: flex; align-items: center; }
-
-        nav a {
-            color: var(--text-dim);
-            text-decoration: none;
-            margin-left: 30px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.3s;
-        }
-
-        nav a:hover { color: var(--accent-red); }
-
-        .auth-only { display: none; } /* Скрити по подразбиране */
-
-        /* ДИЗАЙН НА ФОРМАТА */
         .form-container {
-            max-width: 800px;
-            margin: 40px auto;
-            background: var(--bg-card);
-            padding: 40px;
-            border-radius: 4px;
-            border-left: 4px solid var(--accent-red);
+            max-width: 650px; margin: 40px auto;
+            background: var(--bg-card); padding: 40px;
+            border-radius: 8px; border-left: 4px solid var(--accent-red);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
         }
 
-        .form-header { margin-bottom: 30px; }
-        .form-header h1 { font-size: 2rem; font-weight: 900; }
+        .form-header h1 { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
         .form-header h1 span { color: var(--accent-red); }
 
         .section-title {
-            font-size: 0.9rem;
-            color: var(--accent-red);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 30px 0 15px 0;
-            font-weight: bold;
-            border-bottom: 1px solid var(--border-gray);
-            padding-bottom: 5px;
+            font-size: 0.8rem; color: var(--accent-red);
+            text-transform: uppercase; letter-spacing: 2px;
+            margin: 25px 0 15px 0; font-weight: bold;
         }
 
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 25px; }
         
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-        }
+        label { display: block; margin-bottom: 8px; font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; }
 
-        input[type="text"], 
-        input[type="number"], 
-        textarea {
-            width: 100%;
-            padding: 12px 15px;
-            background: var(--input-bg);
-            border: 1px solid var(--border-gray);
-            border-radius: 4px;
-            color: white;
-            font-size: 1rem;
+        input, textarea {
+            width: 100%; padding: 15px; background: var(--input-bg);
+            border: 1px solid var(--border-gray); border-radius: 4px;
+            color: white; font-size: 1rem; transition: 0.3s;
         }
 
         input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent-red);
+            outline: none; border-color: var(--accent-red);
+            box-shadow: 0 0 15px var(--glow-red);
         }
 
-        .grid-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        /* CUSTOM FILE UPLOAD */
+        /* Зона за качване */
         .file-drop-zone {
-            border: 2px dashed var(--border-gray);
-            padding: 30px;
-            text-align: center;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: 0.3s;
-            background: rgba(255,255,255,0.02);
+            border: 2px dashed var(--border-gray); padding: 30px;
+            text-align: center; cursor: pointer; border-radius: 4px;
+            background: rgba(255,255,255,0.02); transition: 0.3s;
         }
-        .file-drop-zone:hover { border-color: var(--accent-red); }
+        .file-drop-zone:hover { border-color: var(--accent-red); background: rgba(230, 57, 70, 0.05); }
 
         .btn-submit {
-            width: 100%;
-            padding: 18px;
-            background: var(--accent-red);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: 0.3s;
+            width: 100%; padding: 20px; background: var(--accent-red);
+            color: white; border: none; border-radius: 4px;
+            font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
+            cursor: pointer; margin-top: 10px; transition: 0.3s;
         }
 
-        .btn-submit:hover {
-            background: var(--dark-red);
-            transform: translateY(-2px);
-        }
+        .btn-submit:hover { background: var(--dark-red); transform: translateY(-2px); box-shadow: 0 5px 20px var(--glow-red); }
 
-        footer {
-            padding: 40px;
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 0.8rem;
+        .ai-status {
+            font-size: 0.8rem; color: var(--accent-red);
+            margin-top: 10px; display: none; font-style: italic;
         }
     </style>
 </head>
@@ -174,111 +101,79 @@
     <header>
         <div class="logo">ACU<span>STICA</span></div>
         <nav id="nav-menu">
-            <a href="index.html" class="auth-only">Home</a>
-            <a href="scenes.html" class="auth-only">Scenes</a>
-            <a href="profile.html" class="auth-only">Profile</a>
-            <span id="auth-buttons"></span>
+            <a href="index.html" style="color: var(--text-dim); text-decoration: none; margin-left: 20px;">Home</a>
+            <a href="profile.html" style="color: var(--text-dim); text-decoration: none; margin-left: 20px;">Profile</a>
         </nav>
     </header>
 
-    <main class="container">
+    <main>
         <div class="form-container">
             <div class="form-header">
-                <h1>НОВА <span>СЦЕНА</span></h1>
-                <p style="color: var(--text-dim)">Конфигурирай параметрите на акустичния модел.</p>
+                <h1>AI <span>ДИЗАЙН</span> НА СЦЕНА</h1>
+                <p style="color: var(--text-dim)">Опишете вашето пространство и оставете ИИ да изчисли акустиката.</p>
             </div>
 
             <form id="sceneForm">
-                <div class="section-title">Основна информация</div>
+                <div class="section-title">Концепция</div>
                 
                 <div class="form-group">
-                    <label>Име на проекта (Scene Label)</label>
-                    <input type="text" id="scene_label" placeholder="Напр. Main Control Room" required>
+                    <label>Име на сцената</label>
+                    <input type="text" id="scene_label" placeholder="Напр. Моето Dream Студио" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Цел на сцената (Purpose)</label>
-                    <input type="text" id="purpose" placeholder="Напр. Смесване на вокали, Домашно кино...">
+                    <label>Каква е атмосферата?</label>
+                    <textarea id="ai_prompt" placeholder="Опишете стаята (напр. 'Искам малка стая с мек звук за подкаст' или 'Огромно хале за техно парти')..." required></textarea>
                 </div>
 
+                <div class="section-title">Аудио източник</div>
+                
                 <div class="form-group">
-                    <label>Аудио файл</label>
                     <div class="file-drop-zone" onclick="document.getElementById('audio_file').click()">
-                        <span id="file-name">Избери аудио файл (.wav, .mp3)</span>
+                        <span id="file-name">Качете аудиото, което искате да чуете в стаята</span>
                         <input type="file" id="audio_file" hidden accept="audio/*" required>
                     </div>
                 </div>
 
-                <div class="section-title">Акустични параметри (Room Settings)</div>
-
-                
-
-                <div class="grid-row">
-                    <div class="form-group">
-                        <label>RT60 (Време в сек.)</label>
-                        <input type="number" id="rt60" step="0.01" placeholder="0.45">
-                    </div>
-                    <div class="form-group">
-                        <label>Площ (m²)</label>
-                        <input type="number" id="room_size" placeholder="30">
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-submit">Генерирай Сцена</button>
+                <button type="submit" class="btn-submit" id="submitBtn">СЪЗДАЙ МАГИЯТА</button>
+                <div id="status" class="ai-status">ИИ анализира вашето описание и проектира стаята...</div>
             </form>
         </div>
     </main>
 
-    <footer>
-        &copy; 2026 ACUSTICA SYSTEM. DESIGNED FOR AUDIO PROFESSIONALS.
-    </footer>
+    <script>
+        // Скриване на сложните неща от потребителя
+        document.getElementById('audio_file').addEventListener('change', function() {
+            if(this.files[0]) document.getElementById('file-name').innerText = "Файл: " + this.files[0].name;
+        });
 
-<script>
-    // ОРИГИНАЛНАТА ЛОГИКА ЗА НАВИГАЦИЯТА
-    function updateNavigation() {
-        const authContainer = document.getElementById('auth-buttons');
-        const authLinks = document.querySelectorAll('.auth-only');
-        const token = localStorage.getItem('access_token');
+        document.getElementById('sceneForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const status = document.getElementById('status');
+            
+            btn.disabled = true;
+            btn.innerText = "ГЕНЕРИРАНЕ...";
+            status.style.display = "block";
 
-        if (token) {
-            authLinks.forEach(link => link.style.display = 'inline-block');
-            authContainer.innerHTML = `<a href="#" id="logout-btn" style="color: var(--accent-red);">Log Out</a>`;
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                localStorage.removeItem('access_token');
-                window.location.replace('index.html');
-            });
-        } else {
-            authLinks.forEach(link => link.style.display = 'none');
-            authContainer.innerHTML = `<a href="login.html" style="color: var(--accent-red);">Log in/Sign up</a>`;
-        }
-    }
+            // Данните, които отиват към бекенда
+            const formData = new FormData();
+            formData.append('label', document.getElementById('scene_label').value);
+            formData.append('description', document.getElementById('ai_prompt').value);
+            formData.append('audio', document.getElementById('audio_file').files[0]);
 
-    // ЛОГИКА ЗА ФОРМАТА
-    document.getElementById('audio_file').addEventListener('change', function() {
-        if(this.files[0]) document.getElementById('file-name').innerText = "Избран: " + this.files[0].name;
-    });
-
-    document.getElementById('sceneForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Това е твоят Pydantic обект
-        const payload = {
-            scene_label: document.getElementById('scene_label').value,
-            room_settings: {
-                purpose: document.getElementById('purpose').value,
-                materials: document.getElementById('materials').value,
-                rt60: document.getElementById('rt60').value,
-                size: document.getElementById('room_size').value
-            }
-        };
-
-        console.log("Изпращане на данни:", payload);
-        alert("Данните са събрани! Готови за API-то.");
-    });
-
-    document.addEventListener('DOMContentLoaded', updateNavigation);
-</script>
-
+            // ТУК БЕКЕНДЪТ ЩЕ ИЗЧИСЛИ RT60 И МАТЕРИАЛИТЕ ВМЕСТО ПОТРЕБИТЕЛЯ
+            console.log("Изпращане към ИИ...");
+            
+            // Симулирана почивка преди резултата
+            setTimeout(() => {
+                alert("Готово! ИИ избра перфектните пропорции и материали за вашата сцена.");
+                btn.disabled = false;
+                btn.innerText = "СЪЗДАЙ МАГИЯТА";
+                status.style.display = "none";
+            }, 3000);
+        });
+    </script>
 </body>
 </html>
