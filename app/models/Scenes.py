@@ -11,6 +11,6 @@ class Scene(BaseModel):
 
     scene_label: str = Field(..., max_length= 200)
 
-    room_settings: dict 
+    room_settings: dict
 
     user: User
