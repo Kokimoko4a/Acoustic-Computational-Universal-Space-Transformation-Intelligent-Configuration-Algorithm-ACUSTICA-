@@ -1,44 +1,64 @@
+import os
+import google.generativeai as genai
+import json
+from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify
 
 
-scene_bp = Blueprint('scene', __name__)
+load_dotenv()
 
+# 2. Вземаме ключа от системната среда
+api_key = os.getenv("GEMINI_API_KEY")
 
-def extract_scene_parameters(text):
-    text = text.lower()
+# 3. Конфигурираме Gemini
+genai.configure(api_key=api_key)
+
+scenes_bp = Blueprint('scenes_bp', __name__)
+
+# Сложи твоя ключ тук
+genai.configure(api_key)
+
+def gemini_extract_params(user_description):
+    model = genai.GenerativeModel('models/gemini-flash-lite-latest')
     
-    # Дефинираме база данни с ключови думи (настройки)
-    # Тези Key-Value двойки ще се попълват според думите в текста
-    params = {
-        "audio_type": "general",      # Музика, говор, шум
-        "audience_type": "standard",  # Публика: малка, голяма, професионалисти
-        "vibe": "neutral",            # Атмосфера: суха, ехтяща, интимна
-        "room_scale": "medium"        # Мащаб: малък, огромен
-    }
-
-    # Първичен анализ (Keyword Extraction)
-    if any(word in text for word in ["концерт", "рок", "оркестър", "свири"]):
-        params["audio_type"] = "musical_performance"
-        params["room_scale"] = "large"
     
-    if any(word in text for word in ["подкаст", "лекция", "говор"]):
-        params["audio_type"] = "speech"
-        params["room_scale"] = "small"
-        params["vibe"] = "dry"
-
-    if "много" in text or "голяма" in text or "публика" in text:
-        params["audience_type"] = "crowded"
+    prompt = f"""
+    Analyze this room description for an acoustic simulation app: "{user_description}"
+    Return ONLY a JSON object with these keys:
+    - audio_purpose (string: vocal, music, or speech)
+    - room_size_m2 (integer: suggested size in square meters)
+    - reverb_type (string: dry, studio, or hall)
+    - complexity (integer 1-10: based on the description)
+    - materials (list of 3 strings: e.g., ["wood", "foam", "concrete"])
     
-    if "ехо" in text or "катедрала" in text:
-        params["vibe"] = "reverberant"
+    Do not use any markdown formatting or extra words. Just the JSON.
+    """
 
-    return params
+    response = model.generate_content(prompt)
 
+    clean_text = response.text.strip().replace('```json', '').replace('```', '')
+    return json.loads(clean_text)
 
-@scene_bp.route('/createScene', methods=['POST'])
-def createScene():
-    raw_data = request.get_json();
-#in the future we will integrate AI for the dictionary creating
+@scenes_bp.route('/generate-scene', methods=['POST'])
+def generate_scene():
+    try:
+        
+        description = request.form.get('description')
+        label = request.form.get('label')
 
+        if not description:
+            return jsonify({"error": "No description provided"}), 400
 
+        # Питаме Gemini
+        ai_data = gemini_extract_params(description)
 
+        # Връщаме резултата обратно
+        return jsonify({
+            "status": "success",
+            "scene_name": label,
+            "ai_logic": ai_data
+        }), 201
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "AI Engine failed to respond"}), 500

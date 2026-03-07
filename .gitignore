@@ -1,62 +1,24 @@
-# ===========================
-# Python (FastAPI, ML)
-# ===========================
+# Python системни файлове
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-*.env
-*.venv
-env/
+*$py.class
+*.so
+
+# Виртуални среди
 venv/
+env/
+.venv/
+
+# Конфиденциални данни (ВАЖНО)
+.env
+*.env
+
+# Локални данни на проекта
+uploads/
+*.log
 pip-log.txt
-*.egg-info/
+
+# Дистрибуция и билдове
 dist/
 build/
-*.log
-
-# ===========================
-# Node.js / Frontend (Three.js)
-# ===========================
-node_modules/
-npm-debug.log*
-yarn-error.log
-dist/
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# ===========================
-# Blender / 3D files
-# ===========================
-*.blend1
-*.blend2
-*.tmp
-*.bak
-*.blend_autosave
-*.blend1backup
-
-# ===========================
-# Audio / ML / models / generated files
-# ===========================
-*.wav
-*.mp3
-*.flac
-*.h5
-*.pt
-*.pkl
-*.obj
-*.stl
-*.gltf
-*.glb
-*.ply
-
-# ===========================
-# OS / editor files
-# ===========================
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/
-*.swp
+*.egg-info/
