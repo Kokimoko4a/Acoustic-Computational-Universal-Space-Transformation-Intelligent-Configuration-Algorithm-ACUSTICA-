@@ -142,38 +142,67 @@
     </main>
 
     <script>
-        // Скриване на сложните неща от потребителя
-        document.getElementById('audio_file').addEventListener('change', function() {
-            if(this.files[0]) document.getElementById('file-name').innerText = "Файл: " + this.files[0].name;
-        });
+    // Показване името на избрания файл
+    document.getElementById('audio_file').addEventListener('change', function() {
+        if(this.files[0]) document.getElementById('file-name').innerText = "Файл: " + this.files[0].name;
+    });
 
-        document.getElementById('sceneForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const btn = document.getElementById('submitBtn');
-            const status = document.getElementById('status');
-            
-            btn.disabled = true;
-            btn.innerText = "ГЕНЕРИРАНЕ...";
-            status.style.display = "block";
+    document.getElementById('sceneForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('submitBtn');
+        const status = document.getElementById('status');
+        
+        // Визуална обратна връзка
+        btn.disabled = true;
+        btn.innerText = "ИИ ПРОЕКТИРА...";
+        status.style.display = "block";
+        status.innerText = "Gemini анализира вашето описание и изчислява материалите...";
 
-            // Данните, които отиват към бекенда
-            const formData = new FormData();
-            formData.append('label', document.getElementById('scene_label').value);
-            formData.append('description', document.getElementById('ai_prompt').value);
-            formData.append('audio', document.getElementById('audio_file').files[0]);
+        // Подготовка на данните
+        const formData = new FormData();
+        formData.append('label', document.getElementById('scene_label').value);
+        formData.append('description', document.getElementById('ai_prompt').value);
+        formData.append('audio', document.getElementById('audio_file').files[0]);
 
-            // ТУК БЕКЕНДЪТ ЩЕ ИЗЧИСЛИ RT60 И МАТЕРИАЛИТЕ ВМЕСТО ПОТРЕБИТЕЛЯ
-            console.log("Изпращане към ИИ...");
-            
-            // Симулирана почивка преди резултата
-            setTimeout(() => {
-                alert("Готово! ИИ избра перфектните пропорции и материали за вашата сцена.");
-                btn.disabled = false;
-                btn.innerText = "СЪЗДАЙ МАГИЯТА";
-                status.style.display = "none";
-            }, 3000);
-        });
-    </script>
+        try {
+            // ИСТИНСКАТА ЗАЯВКА КЪМ БЕКЕНДА
+            const response = await fetch('http://127.0.0.1:5000/generate-scene', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Успех от Gemini:", data.ai_logic);
+                
+                // Извеждаме резултата в красиво съобщение
+                const ai = data.ai_logic;
+                alert(
+                    `✅ Сцената "${data.scene_name}" е готова!\n\n` +
+                    `🎯 Предназначение: ${ai.audio_purpose}\n` +
+                    `📏 Размер: ${ai.room_size_m2} m²\n` +
+                    `🔊 Реверберация: ${ai.reverb_type}\n` +
+                    `🧱 Материали: ${ai.materials.join(', ')}`
+                );
+                
+                // Тук можеш да пренасочиш потребителя към 3D плеъра
+                // window.location.href = "player.html?scene=" + data.scene_name;
+
+            } else {
+                alert("Грешка от сървъра: " + data.error);
+            }
+        } catch (error) {
+            console.error("Грешка при връзката:", error);
+            alert("Неуспешна връзка със сървъра. Проверете дали Python бекендът работи!");
+        } finally {
+            // Връщаме бутона в начално състояние
+            btn.disabled = false;
+            btn.innerText = "СЪЗДАЙ МАГИЯТА";
+            status.style.display = "none";
+        }
+    });
+</script>
 </body>
 </html>

@@ -15,8 +15,6 @@ genai.configure(api_key=api_key)
 
 scenes_bp = Blueprint('scenes_bp', __name__)
 
-# Сложи твоя ключ тук
-genai.configure(api_key)
 
 def gemini_extract_params(user_description):
     model = genai.GenerativeModel('models/gemini-flash-lite-latest')
@@ -28,8 +26,8 @@ def gemini_extract_params(user_description):
     - audio_purpose (string: vocal, music, or speech)
     - room_size_m2 (integer: suggested size in square meters)
     - reverb_type (string: dry, studio, or hall)
-    - complexity (integer 1-10: based on the description)
-    - materials (list of 3 strings: e.g., ["wood", "foam", "concrete"])
+    - complexity (integer 1-50: based on the description)
+    - materials (list as you percieve)
     
     Do not use any markdown formatting or extra words. Just the JSON.
     """
