@@ -90,6 +90,12 @@ def verify_password(plain_password, hashed_password):
     # plain_password идва от Input-а, hashed_password идва от Postgres
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
+def addScene(sceneData):
+
+    query = "INSERT INTO scenes (audio_id, scene_label, room_settings, user_id)" \
+                "VALUES (%s, %s, %s, %s)" \
+                "RETURNING id;"
+
      
 
 
