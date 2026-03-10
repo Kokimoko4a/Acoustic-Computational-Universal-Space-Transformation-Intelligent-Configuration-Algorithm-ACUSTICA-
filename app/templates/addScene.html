@@ -142,67 +142,67 @@
     </main>
 
     <script>
-    // Показване името на избрания файл
-    document.getElementById('audio_file').addEventListener('change', function() {
-        if(this.files[0]) document.getElementById('file-name').innerText = "Файл: " + this.files[0].name;
-    });
-
     document.getElementById('sceneForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    e.preventDefault();
+    
+    const btn = document.getElementById('submitBtn');
+    const status = document.getElementById('status');
+    const audioInput = document.getElementById('audio_file');
+    const selectedFile = audioInput.files[0];
+    
+    // Визуална обратна връзка
+    btn.disabled = true;
+    btn.innerText = "ИИ ПРОЕКТИРА...";
+    status.style.display = "block";
+
+    // Подготовка на данните
+    const formData = new FormData();
+    formData.append('label', document.getElementById('scene_label').value);
+    formData.append('description', document.getElementById('ai_prompt').value);
+    
+    // Добавяме самия файл
+    formData.append('audio', selectedFile);
+
+    // ДОБАВЯМЕ МЕТАДАННИ ЗА ФАЙЛА (Име и Тип)
+    if (selectedFile) {
+        formData.append('audio_name', selectedFile.name);
+        formData.append('audio_type', selectedFile.type); // напр. audio/mp3, audio/wav
+        formData.append('audio_size', selectedFile.size); // в байтове
+    }
+
+    try {
+        console.log("Изпращане на заявка към ACUSTICA Engine...");
         
-        const btn = document.getElementById('submitBtn');
-        const status = document.getElementById('status');
-        
-        // Визуална обратна връзка
-        btn.disabled = true;
-        btn.innerText = "ИИ ПРОЕКТИРА...";
-        status.style.display = "block";
-        status.innerText = "Gemini анализира вашето описание и изчислява материалите...";
+        const response = await fetch('http://127.0.0.1:5000/generate-scene', {
+            method: 'POST',
+            body: formData
+        });
 
-        // Подготовка на данните
-        const formData = new FormData();
-        formData.append('label', document.getElementById('scene_label').value);
-        formData.append('description', document.getElementById('ai_prompt').value);
-        formData.append('audio', document.getElementById('audio_file').files[0]);
+        const data = await response.json();
 
-        try {
-            // ИСТИНСКАТА ЗАЯВКА КЪМ БЕКЕНДА
-            const response = await fetch('http://127.0.0.1:5000/generate-scene', {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                console.log("Успех от Gemini:", data.ai_logic);
-                
-                // Извеждаме резултата в красиво съобщение
-                const ai = data.ai_logic;
-                alert(
-                    `✅ Сцената "${data.scene_name}" е готова!\n\n` +
-                    `🎯 Предназначение: ${ai.audio_purpose}\n` +
-                    `📏 Размер: ${ai.room_size_m2} m²\n` +
-                    `🔊 Реверберация: ${ai.reverb_type}\n` +
-                    `🧱 Материали: ${ai.materials.join(', ')}`
-                );
-                
-                // Тук можеш да пренасочиш потребителя към 3D плеъра
-                // window.location.href = "player.html?scene=" + data.scene_name;
-
-            } else {
-                alert("Грешка от сървъра: " + data.error);
-            }
-        } catch (error) {
-            console.error("Грешка при връзката:", error);
-            alert("Неуспешна връзка със сървъра. Проверете дали Python бекендът работи!");
-        } finally {
-            // Връщаме бутона в начално състояние
-            btn.disabled = false;
-            btn.innerText = "СЪЗДАЙ МАГИЯТА";
-            status.style.display = "none";
+        if (response.ok) {
+            console.log("Успех! Данни за аудиото са получени и обработени.");
+            const ai = data.ai_logic;
+            
+            alert(
+                `✅ Сцената "${data.scene_name}" е готова!\n\n` +
+                `🎵 Обработен файл: ${data.audio_info?.name || 'Неизвестен'}\n` +
+                `🎯 Предназначение: ${ai.audio_purpose}\n` +
+                `📏 Размер: ${ai.room_size_m2} m²\n` +
+                `🧱 Материали: ${ai.materials.join(', ')}`
+            );
+        } else {
+            alert("Грешка: " + data.error);
         }
-    });
+    } catch (error) {
+        console.error("Грешка при връзката:", error);
+        alert("Сървърът не отговаря.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "СЪЗДАЙ МАГИЯТА";
+        status.style.display = "none";
+    }
+});
 </script>
 </body>
 </html>

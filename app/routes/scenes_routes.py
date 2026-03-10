@@ -1,6 +1,8 @@
 import os
 import google.generativeai as genai
 import json
+import cloudinary
+import cloudinary.uploader
 from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify
 
@@ -12,6 +14,13 @@ api_key = os.getenv("GEMINI_API_KEY")
 
 # 3. Конфигурираме Gemini
 genai.configure(api_key=api_key)
+
+
+cloudinary.config(
+  cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME"),
+  api_key = os.getenv("CLOUDINARY_API_KEY"),
+  api_secret = os.getenv("CLOUDINARY_API_SECRET")
+)
 
 scenes_bp = Blueprint('scenes_bp', __name__)
 
@@ -35,28 +44,42 @@ def gemini_extract_params(user_description):
     response = model.generate_content(prompt)
 
     clean_text = response.text.strip().replace('```json', '').replace('```', '')
-    return json.loads(clean_text)
+    return json.loads(clean_text) #this fucntion is for tesing the Gemini AI
+
+
 
 @scenes_bp.route('/generate-scene', methods=['POST'])
 def generate_scene():
     try:
-        
-        description = request.form.get('description')
+        # 1. Вземаме данните от формата
         label = request.form.get('label')
+        description = request.form.get('description')
+        audio_file = request.files.get('audio')
+        
+        # 2. Качваме аудиото в Cloudinary
+        # Използваме resource_type="video", защото Cloudinary така третира аудиото
+        print(f"Качване на аудио: {audio_file.filename}...")
+        audio_upload = cloudinary.uploader.upload(audio_file, resource_type="video", folder="acustica/audio")
+        audio_url = audio_upload['secure_url']
 
-        if not description:
-            return jsonify({"error": "No description provided"}), 400
+        # 3. ТУК ЩЕ СЕ ГЕНЕРИРА 3D МОДЕЛА (засега може да е просто пример)
+        # Ако имаш готов файл на диска, качваш го като "raw"
+        # model_upload = cloudinary.uploader.upload("path/to/model.glb", resource_type="raw", folder="acustica/models")
+        # model_url = model_upload['secure_url']
 
-        # Питаме Gemini
+        # 4. Викаме Gemini за параметрите
+        # (използваме функцията gemini_extract_params, която вече написахме)
         ai_data = gemini_extract_params(description)
 
-        # Връщаме резултата обратно
+        # 5. Връщаме всичко към фронтенда
         return jsonify({
             "status": "success",
             "scene_name": label,
+            "audio_url": audio_url,
+            # "model_url": model_url,
             "ai_logic": ai_data
         }), 201
 
     except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({"error": "AI Engine failed to respond"}), 500
+        print(f"Грешка: {e}")
+        return jsonify({"error": str(e)}), 500
