@@ -95,19 +95,38 @@ def verify_password(plain_password, hashed_password):
 
 def addScene(sceneData):
 
-
-
-
     query = "INSERT INTO scenes (audio_id, scene_label, room_settings, user_id)" \
                 "VALUES (%s, %s, %s, %s)" \
                 "RETURNING id;"
+    
 
   
 
-
-
-
 def addAudioFile(audioFileData):
 
- #Here the whole loginc will be consisted of adding the path returned from the cloudiinary to the DB. And notihng more.
- test  = 3
+ query = "INSERT INTO audio_files (file_name, file_path)" \
+                "VALUES (%s, %s)" \
+                "RETURNING id;"
+ 
+
+
+ try:
+       
+        with psycopg2.connect(**db_params) as conn:
+            with conn.cursor() as cur:
+         
+                
+                cur.execute(query, (
+                    audioFileData.file_name,
+                    audioFileData.url
+                ))
+                
+               
+                auio_file_id = cur.fetchone()[0]
+                
+                
+                return auio_file_id # this need testing 
+
+ except Exception as e:
+    print(f"Критична грешка при запис в базата: {e}")
+    return None

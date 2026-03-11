@@ -51,32 +51,24 @@ def gemini_extract_params(user_description):
 @scenes_bp.route('/generate-scene', methods=['POST'])
 def generate_scene():
     try:
-        # 1. Вземаме данните от формата
+     
         label = request.form.get('label')
         description = request.form.get('description')
         audio_file = request.files.get('audio')
         
-        # 2. Качваме аудиото в Cloudinary
-        # Използваме resource_type="video", защото Cloudinary така третира аудиото
+
         print(f"Качване на аудио: {audio_file.filename}...")
         audio_upload = cloudinary.uploader.upload(audio_file, resource_type="video", folder="acustica/audio")
         audio_url = audio_upload['secure_url']
 
-        # 3. ТУК ЩЕ СЕ ГЕНЕРИРА 3D МОДЕЛА (засега може да е просто пример)
-        # Ако имаш готов файл на диска, качваш го като "raw"
-        # model_upload = cloudinary.uploader.upload("path/to/model.glb", resource_type="raw", folder="acustica/models")
-        # model_url = model_upload['secure_url']
 
-        # 4. Викаме Gemini за параметрите
-        # (използваме функцията gemini_extract_params, която вече написахме)
         ai_data = gemini_extract_params(description)
 
-        # 5. Връщаме всичко към фронтенда
         return jsonify({
             "status": "success",
             "scene_name": label,
             "audio_url": audio_url,
-            # "model_url": model_url,
+            # "model_url": model_url, when we start to create the 3d models we will add them to the cloudinary 
             "ai_logic": ai_data
         }), 201
 
