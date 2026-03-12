@@ -102,7 +102,7 @@ def addScene(sceneData):
 
   
 
-def addAudioFile(audioFileData):
+def addAudioFile(audio_file_name, audio_url):
 
  query = "INSERT INTO audio_files (file_name, file_path)" \
                 "VALUES (%s, %s)" \
@@ -117,15 +117,15 @@ def addAudioFile(audioFileData):
          
                 
                 cur.execute(query, (
-                    audioFileData.file_name,
-                    audioFileData.url
+                    audio_file_name,
+                    audio_url
                 ))
                 
                
                 auio_file_id = cur.fetchone()[0]
                 
                 
-                return auio_file_id # this need testing 
+                return auio_file_id # this needs testing 
 
  except Exception as e:
     print(f"Критична грешка при запис в базата: {e}")

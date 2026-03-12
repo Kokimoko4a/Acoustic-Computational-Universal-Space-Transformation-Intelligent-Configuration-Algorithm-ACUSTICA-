@@ -5,6 +5,7 @@ import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify
+from data import db_manager
 
 
 load_dotenv()
@@ -44,8 +45,8 @@ def gemini_extract_params(user_description):
     response = model.generate_content(prompt)
 
     clean_text = response.text.strip().replace('```json', '').replace('```', '')
-    return json.loads(clean_text) #this fucntion is for tesing the Gemini AI
-
+    return json.loads(clean_text) #this fucntion is for tesing the Gemini AI and the adding the audio to the DB
+ 
 
 
 @scenes_bp.route('/generate-scene', methods=['POST'])
@@ -55,12 +56,16 @@ def generate_scene():
         label = request.form.get('label')
         description = request.form.get('description')
         audio_file = request.files.get('audio')
+
+        #here add the user id retrieveing from the front end and test again because in the db you save the publisher id in the audio file table in the DB
         
 
         print(f"Качване на аудио: {audio_file.filename}...")
         audio_upload = cloudinary.uploader.upload(audio_file, resource_type="video", folder="acustica/audio")
         audio_url = audio_upload['secure_url']
 
+        audio_id =  db_manager.addAudioFile(audio_file.name, audio_url, )
+        
 
         ai_data = gemini_extract_params(description)
 
@@ -69,7 +74,8 @@ def generate_scene():
             "scene_name": label,
             "audio_url": audio_url,
             # "model_url": model_url, when we start to create the 3d models we will add them to the cloudinary 
-            "ai_logic": ai_data
+            "ai_logic": ai_data,
+            "audio_id": audio_id
         }), 201
 
     except Exception as e:

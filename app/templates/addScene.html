@@ -189,7 +189,8 @@
                 `🎵 Обработен файл: ${data.audio_info?.name || 'Неизвестен'}\n` +
                 `🎯 Предназначение: ${ai.audio_purpose}\n` +
                 `📏 Размер: ${ai.room_size_m2} m²\n` +
-                `🧱 Материали: ${ai.materials.join(', ')}`
+                `🧱 Материали: ${ai.materials.join(', ')} 
+                 Audio id is: ${data.audio_id}`
             );
         } else {
             alert("Грешка: " + data.error);
