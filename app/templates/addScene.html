@@ -168,6 +168,8 @@
         formData.append('audio_name', selectedFile.name);
         formData.append('audio_type', selectedFile.type); // напр. audio/mp3, audio/wav
         formData.append('audio_size', selectedFile.size); // в байтове
+        formData.append('user_id', localStorage.getItem('acustica_token'));
+        formData.append('user_email', )
     }
 
     try {

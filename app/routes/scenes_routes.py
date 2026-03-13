@@ -5,6 +5,7 @@ import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify
+import jwt
 from data import db_manager
 
 
@@ -56,15 +57,22 @@ def generate_scene():
         label = request.form.get('label')
         description = request.form.get('description')
         audio_file = request.files.get('audio')
+        user_token = request.form.get('user_id')
 
         #here add the user id retrieveing from the front end and test again because in the db you save the publisher id in the audio file table in the DB
         
+
+        user_id = get_user_id_from_token(user_token)
+
+        User = db_manager.get_user_by_id(user_id)
+
+
 
         print(f"Качване на аудио: {audio_file.filename}...")
         audio_upload = cloudinary.uploader.upload(audio_file, resource_type="video", folder="acustica/audio")
         audio_url = audio_upload['secure_url']
 
-        audio_id =  db_manager.addAudioFile(audio_file.name, audio_url, )
+        audio_id =  db_manager.addAudioFile(audio_file.name, audio_url, User )
         
 
         ai_data = gemini_extract_params(description)
@@ -81,3 +89,18 @@ def generate_scene():
     except Exception as e:
         print(f"Грешка: {e}")
         return jsonify({"error": str(e)}), 500
+    
+
+
+
+
+
+def get_user_id_from_token(token):
+    try:
+        # Декодираме със същия ключ и алгоритъм
+        payload = jwt.decode(token, "19012007", algorithms=['HS256'])
+        return payload['user_id']
+    except jwt.ExpiredSignatureError:
+        return "Expired" # Токенът е изтекъл
+    except jwt.InvalidTokenError:
+        return "Invalid" # Токенът е невалиден
