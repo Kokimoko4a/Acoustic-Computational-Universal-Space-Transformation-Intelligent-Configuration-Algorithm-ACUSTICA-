@@ -3,6 +3,7 @@ from psycopg2 import sql
 from psycopg2.extras import RealDictCursor
 import bcrypt
 from models import Audio
+from models.User import User
 
 
 db_params = {
@@ -89,19 +90,25 @@ def get_user_by_email(email):
 
 def get_user_by_id(id):
 
-    conn = get_db_connection() 
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+   conn = get_db_connection() 
+   cur = conn.cursor(cursor_factory=RealDictCursor)
     
-    try:
-        cur.execute("SELECT * FROM users WHERE id = %s", (id))
-        user = cur.fetchone()
-        return user
-    except Exception as e:
+   try:
+        cur.execute("SELECT * FROM users WHERE id = %s", (id,))
+        user_dict = cur.fetchone() # Това е речникът
+        
+        if user_dict:
+            # ТУК Е МАГИЯТА:
+            # **user_dict разпакетира речника и го подава на класа User
+            return User(**user_dict) 
+            
+        return None
+   except Exception as e:
         print(f"Грешка при търсене: {e}")
         return None
-    finally:
+   finally:
         cur.close()
-        conn.close()
+        conn.close() # this needs fixing 
 
 
 
@@ -128,34 +135,43 @@ def addAudioFile(audio_file_name, audio_url, curr_user):
 
 
 
- Audio_Curr = Audio(user=curr_user, file_name=audio_file_name,file_path=audio_url)
+    Audio_Curr = Audio(
+        user=curr_user, 
+        file_name=audio_file_name, 
+        file_path=audio_url
+    )
 
+    # 2. Дефинираме заявката правилно (3 колони = 3 стойности)
+    query = """
+        INSERT INTO audio_files (file_name, file_path, user_id)
+        VALUES (%s, %s, %s)
+        RETURNING id;
+    """
 
-
- query = "INSERT INTO audio_files (file_name, file_path, user_id)" \
-                "VALUES (%s, %s)" \
-                "RETURNING id;"
- 
-
-
- try:
-       
+    try:
+        # Използваме context manager за връзката и курсора
         with psycopg2.connect(**db_params) as conn:
             with conn.cursor() as cur:
-         
-                
+                # Подаваме точно 3 параметъра в кортежа
                 cur.execute(query, (
                     Audio_Curr.file_name,
                     Audio_Curr.file_path,
-                    Audio_Curr.user.id #test this tommorow !!!!!!!!!!!!
+                    Audio_Curr.user.id  # Вземаме ID-то от вложения обект
                 ))
                 
-               
-                auio_file_id = cur.fetchone()[0]
+                # Вземаме генерираното ID от RETURNING клаузата
+                result = cur.fetchone()
                 
+                if result:
+                    audio_file_id = result[0]
+                    # С 'with' блок commit-ът става автоматично при успех
+                    print(f"Успешен запис! Audio ID: {audio_file_id}")
+                    return audio_file_id
                 
-                return auio_file_id # this needs testing 
+        return None
 
- except Exception as e:
-    print(f"Критична грешка при запис в базата: {e}")
-    return None
+    except Exception as e:
+        # Ако тук гръмне, значи или няма такава колона, или връзката е прекъснала
+        print(f"Критична грешка при запис в базата: {e}")
+        # Тук е добре да помислиш за rollback, но 'with' го прави вместо теб
+        return None

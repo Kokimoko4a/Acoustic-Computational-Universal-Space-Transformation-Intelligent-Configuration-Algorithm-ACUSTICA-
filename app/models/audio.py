@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 from datetime import datetime
-from User import User
+from models.User import User
 
 class Audio(BaseModel):
 
