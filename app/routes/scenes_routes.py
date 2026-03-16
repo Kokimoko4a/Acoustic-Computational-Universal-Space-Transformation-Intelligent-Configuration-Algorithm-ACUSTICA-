@@ -30,7 +30,6 @@ scenes_bp = Blueprint('scenes_bp', __name__)
 def gemini_extract_params(user_description):
     model = genai.GenerativeModel('models/gemini-flash-lite-latest')
     
-    
     prompt = f"""
     Analyze this room description for an acoustic simulation app: "{user_description}"
     Return ONLY a JSON object with these keys:
@@ -38,15 +37,37 @@ def gemini_extract_params(user_description):
     - room_size_m2 (integer: suggested size in square meters)
     - reverb_type (string: dry, studio, or hall)
     - complexity (integer 1-50: based on the description)
-    - materials (list as you percieve)
+    - materials (list of strings)
     
-    Do not use any markdown formatting or extra words. Just the JSON.
+    IMPORTANT: Return only valid JSON. No markdown, no comments.
     """
 
-    response = model.generate_content(prompt)
+    try:
+        response = model.generate_content(prompt)
+        
+        # Почистване на текста
+        text_content = response.text.strip()
+        
+        # Махаме евентуални markdown тагове, които моделът може да сложи
+        if "```json" in text_content:
+            text_content = text_content.split("```json")[1].split("```")[0].strip()
+        elif "```" in text_content:
+            text_content = text_content.split("```")[1].strip()
 
-    clean_text = response.text.strip().replace('```json', '').replace('```', '')
-    return json.loads(clean_text) #this fucntion is for tesing the Gemini AI and the adding the audio to the DB
+        # Превръщаме в истински Python речник
+        data = json.loads(text_content)
+        return data
+
+    except Exception as e:
+        print(f"AI Analysis Error: {e}")
+        # Връщаме дефолтни данни, ако AI се провали, за да не гърми приложението
+        return {
+            "audio_purpose": "speech This is default data something is not ok!!!!!!!",
+            "room_size_m2": 20,
+            "reverb_type": "studio",
+            "complexity": 10,
+            "materials": ["plaster", "carpet"]
+        } #this fucntion is for tesing the Gemini AI and the adding the audio to the DB
  
 
 
@@ -72,10 +93,13 @@ def generate_scene():
         audio_upload = cloudinary.uploader.upload(audio_file, resource_type="video", folder="acustica/audio")
         audio_url = audio_upload['secure_url']
 
-        audio_id =  db_manager.addAudioFile(audio_file.name, audio_url, User )
-        
+        Audio =  db_manager.addAudioFile(audio_file.name, audio_url, User )
+     
 
         ai_data = gemini_extract_params(description)
+
+
+        room_id = db_manager.addScene(Audio, label, ai_data, User)
 
         return jsonify({
             "status": "success",
@@ -83,7 +107,7 @@ def generate_scene():
             "audio_url": audio_url,
             # "model_url": model_url, when we start to create the 3d models we will add them to the cloudinary 
             "ai_logic": ai_data,
-            "audio_id": audio_id
+            "audio_id": Audio.id
         }), 201
 
     except Exception as e:

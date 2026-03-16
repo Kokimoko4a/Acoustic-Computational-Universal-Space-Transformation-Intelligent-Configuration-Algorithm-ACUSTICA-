@@ -1,9 +1,12 @@
+import json
+
 import psycopg2
 from psycopg2 import sql
 from psycopg2.extras import RealDictCursor
 import bcrypt
 from models.Audio import Audio
 from models.User import User
+from models.Scenes import Scene
 
 
 db_params = {
@@ -122,11 +125,54 @@ def verify_password(plain_password, hashed_password):
 
 
 
-def addScene(sceneData):
+def addScene(Audio, scene_Label, room_Settings, User):
 
-    query = "INSERT INTO scenes (audio_id, scene_label, room_settings, user_id)" \
+
+ 
+ 
+
+
+ Scene_curr = Scene(
+        scene_label= scene_Label,
+        audio_file= Audio,
+        room_settings=room_Settings,
+        user= User
+    )
+
+    # 2. Дефинираме заявката правилно (3 колони = 3 стойности)
+ query = "INSERT INTO scenes (audio_id, scene_label, room_settings, user_id)" \
                 "VALUES (%s, %s, %s, %s)" \
                 "RETURNING id;"
+
+ try:
+        # Използваме context manager за връзката и курсора
+        with psycopg2.connect(**db_params) as conn:
+            with conn.cursor() as cur:
+                # Подаваме точно 4 параметъра в кортежа
+                cur.execute(query, (
+                    Scene_curr.audio_file.id,
+                    Scene_curr.scene_label,
+                    json.dumps(Scene_curr.room_settings),
+                    Scene_curr.user.id 
+                ))
+                
+                # Вземаме генерираното ID от RETURNING клаузата
+                result = cur.fetchone()
+                
+                if result:
+                   
+                    print(f"Успешен запис! Audio ID: {Scene_curr.id}") # YOU SHOULD REMOVE THIS LATER !!!!!
+                    return Scene_curr
+                
+        return None
+
+ except Exception as e:
+        # Ако тук гръмне, значи или няма такава колона, или връзката е прекъснала
+        print(f"Критична грешка при запис в базата: {e}")
+        # Тук е добре да помислиш за rollback, но 'with' го прави вместо теб
+        return None
+
+
     
 
   
@@ -163,10 +209,10 @@ def addAudioFile(audio_file_name, audio_url, curr_user):
                 result = cur.fetchone()
                 
                 if result:
-                    audio_file_id = result[0]
-                    # С 'with' блок commit-ът става автоматично при успех
-                    print(f"Успешен запис! Audio ID: {audio_file_id}")
-                    return audio_file_id
+                    
+                    generated_id = result[0]
+                    Audio_Curr.id = generated_id
+                    return Audio_Curr
                 
         return None
 

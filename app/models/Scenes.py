@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
-from Audio import Audio
-from User import User
+from models.Audio import Audio
+from models.User import User
 
 class Scene(BaseModel):
 
