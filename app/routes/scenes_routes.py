@@ -80,7 +80,7 @@ def generate_scene():
         audio_file = request.files.get('audio')
         user_token = request.form.get('user_id')
 
-        #here add the user id retrieveing from the front end and test again because in the db you save the publisher id in the audio file table in the DB
+       
         
 
         user_id = get_user_id_from_token(user_token)
@@ -121,7 +121,7 @@ def generate_scene():
 
 def get_user_id_from_token(token):
     try:
-        # Декодираме със същия ключ и алгоритъм
+        
         payload = jwt.decode(token, "19012007", algorithms=['HS256'])
         return payload['user_id']
     except jwt.ExpiredSignatureError:
