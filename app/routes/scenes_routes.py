@@ -6,7 +6,9 @@ import cloudinary.uploader
 from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify
 import jwt
+from ACUSTICA.app.data.architect_service import SceneGenerator
 from data import db_manager
+
 
 
 load_dotenv()
@@ -114,6 +116,18 @@ def generate_scene():
         print(f"Грешка: {e}")
         return jsonify({"error": str(e)}), 500
     
+
+
+
+def generate_scene_prompt():
+    # Пример как ще го ползваш:
+# generator = SceneGenerator(YOUR_API_KEY)
+# file_content = generator.create_3d_file_content(data_from_db)
+# upload_to_cloud(file_content, "scene_123.json")
+
+ generator = SceneGenerator(api_key)
+
+ 
 
 
 

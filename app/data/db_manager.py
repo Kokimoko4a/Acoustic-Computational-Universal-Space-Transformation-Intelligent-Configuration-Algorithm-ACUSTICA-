@@ -98,11 +98,10 @@ def get_user_by_id(id):
     
    try:
         cur.execute("SELECT * FROM users WHERE id = %s", (id,))
-        user_dict = cur.fetchone() # Това е речникът
+        user_dict = cur.fetchone()
         
         if user_dict:
-            # ТУК Е МАГИЯТА:
-            # **user_dict разпакетира речника и го подава на класа User
+           
             return User(**user_dict) 
             
         return None
@@ -221,3 +220,9 @@ def addAudioFile(audio_file_name, audio_url, curr_user):
         print(f"Критична грешка при запис в базата: {e}")
         # Тук е добре да помислиш за rollback, но 'with' го прави вместо теб
         return None
+    
+
+
+
+def get_scene_by_id():
+    ## PLEASE DEVELOP THE LOGC HERE LATER
