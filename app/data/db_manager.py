@@ -110,7 +110,7 @@ def get_user_by_id(id):
         return None
    finally:
         cur.close()
-        conn.close() # this needs fixing 
+        conn.close()
 
 
 
@@ -224,5 +224,25 @@ def addAudioFile(audio_file_name, audio_url, curr_user):
 
 
 
-def get_scene_by_id():
-    ## PLEASE DEVELOP THE LOGC HERE LATER
+def get_scene_settings_by_id(scene_id):
+   
+
+  conn = get_db_connection() 
+  cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+  try:
+        cur.execute("SELECT room_settings FROM scenes WHERE ID = %s", (scene_id,))
+        room_settings = cur.fetchone()
+        
+        if room_settings:
+           
+            return  room_settings
+            
+        return None
+  except Exception as e:
+        print(f"Грешка при търсене: {e}")
+        return None
+  finally:
+        cur.close()
+        conn.close() # this is not tested! Please test it! In the future you may prefer working and transfering the realdict into a json for the Gemini Ai promor generator! 
+

@@ -35,7 +35,7 @@ def gemini_extract_params(user_description):
     prompt = f"""
     Analyze this room description for an acoustic simulation app: "{user_description}"
     Return ONLY a JSON object with these keys:
-    - audio_purpose (string: vocal, music, or speech)
+    - audio_purpose (string: vocal, music, or speech, genre of music)
     - room_size_m2 (integer: suggested size in square meters)
     - reverb_type (string: dry, studio, or hall)
     - complexity (integer 1-50: based on the description)
