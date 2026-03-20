@@ -138,16 +138,16 @@ def addScene(Audio, scene_Label, room_Settings, User):
         user= User
     )
 
-    # 2. Дефинираме заявката правилно (3 колони = 3 стойности)
+   
  query = "INSERT INTO scenes (audio_id, scene_label, room_settings, user_id)" \
                 "VALUES (%s, %s, %s, %s)" \
                 "RETURNING id;"
 
  try:
-        # Използваме context manager за връзката и курсора
+        
         with psycopg2.connect(**db_params) as conn:
             with conn.cursor() as cur:
-                # Подаваме точно 4 параметъра в кортежа
+           
                 cur.execute(query, (
                     Scene_curr.audio_file.id,
                     Scene_curr.scene_label,
@@ -155,20 +155,20 @@ def addScene(Audio, scene_Label, room_Settings, User):
                     Scene_curr.user.id 
                 ))
                 
-                # Вземаме генерираното ID от RETURNING клаузата
+            
                 result = cur.fetchone()
                 
                 if result:
                    
                     print(f"Успешен запис! Audio ID: {Scene_curr.id}") # YOU SHOULD REMOVE THIS LATER !!!!!
-                    return Scene_curr
+                    return result
                 
         return None
 
  except Exception as e:
-        # Ако тук гръмне, значи или няма такава колона, или връзката е прекъснала
+       
         print(f"Критична грешка при запис в базата: {e}")
-        # Тук е добре да помислиш за rollback, но 'with' го прави вместо теб
+
         return None
 
 
@@ -186,7 +186,7 @@ def addAudioFile(audio_file_name, audio_url, curr_user):
         file_path=audio_url
     )
 
-    # 2. Дефинираме заявката правилно (3 колони = 3 стойности)
+
     query = """
         INSERT INTO audio_files (file_name, file_path, user_id)
         VALUES (%s, %s, %s)
@@ -194,17 +194,17 @@ def addAudioFile(audio_file_name, audio_url, curr_user):
     """
 
     try:
-        # Използваме context manager за връзката и курсора
+    
         with psycopg2.connect(**db_params) as conn:
             with conn.cursor() as cur:
-                # Подаваме точно 3 параметъра в кортежа
+    
                 cur.execute(query, (
                     Audio_Curr.file_name,
                     Audio_Curr.file_path,
-                    Audio_Curr.user.id  # Вземаме ID-то от вложения обект
+                    Audio_Curr.user.id  
                 ))
                 
-                # Вземаме генерираното ID от RETURNING клаузата
+          
                 result = cur.fetchone()
                 
                 if result:
@@ -216,9 +216,9 @@ def addAudioFile(audio_file_name, audio_url, curr_user):
         return None
 
     except Exception as e:
-        # Ако тук гръмне, значи или няма такава колона, или връзката е прекъснала
+     
         print(f"Критична грешка при запис в базата: {e}")
-        # Тук е добре да помислиш за rollback, но 'with' го прави вместо теб
+    
         return None
     
 

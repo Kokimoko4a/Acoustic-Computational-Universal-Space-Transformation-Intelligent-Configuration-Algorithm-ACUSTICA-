@@ -6,7 +6,6 @@ import cloudinary.uploader
 from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify
 import jwt
-from ACUSTICA.app.data.architect_service import SceneGenerator
 from data import db_manager
 
 
@@ -101,7 +100,11 @@ def generate_scene():
         ai_data = gemini_extract_params(description)
 
 
-        room_id = db_manager.addScene(Audio, label, ai_data, User)
+        scene_id = db_manager.addScene(Audio, label, ai_data, User)
+
+
+        ai_prompt = generate_scene_prompt(scene_id)
+
 
         return jsonify({
             "status": "success",
@@ -119,13 +122,21 @@ def generate_scene():
 
 
 
-def generate_scene_prompt():
+def generate_scene_prompt(scene_id):
     # Пример как ще го ползваш:
 # generator = SceneGenerator(YOUR_API_KEY)
 # file_content = generator.create_3d_file_content(data_from_db)
 # upload_to_cloud(file_content, "scene_123.json")
 
+ from data.architect_service import SceneGenerator
+
  generator = SceneGenerator(api_key)
+
+ scene_settings = db_manager.get_scene_settings_by_id(scene_id)
+
+ ai_generated_prompt = generator.create_3d_file_content(scene_settings) # THIS NEEDS FIXING.
+
+ return ai_generated_prompt
 
  
 
