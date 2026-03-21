@@ -8,7 +8,7 @@ class SceneGenerator:
         genai.configure(api_key=api_key)
         
         
-        self.model = genai.GenerativeModel('gemini-2.5-flash-preview-09-2025')
+        self.model = genai.GenerativeModel('models/gemini-flash-lite-latest')
         
 
     def create_3d_file_content(self, scene_data):
