@@ -90,43 +90,91 @@ class SceneGenerator:
 
         # 2. ТЕХНИЧЕСКИ ПРОМПТ
         main_prompt = f"""
-        Act as a Senior Acoustic Engineer and 3D Architect.
-        Scene Title: {room_name}
-        
-        INPUT DATA:
-        - Target Area: {settings.get('room_size_m2', 20)} m2
-        - Desired Materials: {settings.get('materials', [])}
-        - Complexity: {settings.get('complexity', 10)}/50
-        - Audio Analysis Instruction: {audio_context}
+You are NOT a creative AI. You are a deterministic architectural and acoustic simulation engine.
 
-        ENGINE RULES:
-        1. Precise Math: Width * Depth MUST be approximately {settings.get('room_size_m2')} m2.
-        2. Acoustic Design: 
-           - 'audio_source': Place it at the coordinates where the sound seems to originate.
-           - 'acoustic_panel': If you hear excessive echo, place these on the walls.
-           - 'pillar': Add structural pillars if complexity > 30.
-        3. Materials: Map to rendering materials like 'wood', 'concrete', 'fabric', 'glass', 'brick'.
+Your task is to CONSTRUCT a physically plausible interior space.
 
-        OUTPUT SPECIFICATION:
-        Return ONLY a raw JSON object.
+Scene Title: {room_name}
+
+=====================
+INPUT DATA
+=====================
+- Target Area: {settings.get('room_size_m2', 20)} m2
+- Materials: {settings.get('materials', [])}
+- Complexity: {settings.get('complexity', 10)}/50
+- Audio Instruction: {audio_context}
+
+=====================
+ENGINEERING RULES
+=====================
+
+GEOMETRY:
+- width * depth MUST be within ±2% of target area
+- height must be between 2.4m and 4.0m
+- all dimensions must snap to 0.1m grid
+- walls thickness = 0.2m
+
+STRUCTURE:
+- Always create 4 walls, 1 floor, 1 ceiling
+- Walls must form a closed rectangular volume
+- If complexity > 30 → add load-bearing pillars in a grid
+- Pillars must align with structural logic (not random)
+
+ACOUSTICS:
+- If RT60 > 600ms → add acoustic panels on walls
+- If RT60 < 300ms → reduce panels
+- Panels must be placed symmetrically
+
+SPATIAL LOGIC:
+- No floating objects
+- All entities must be inside room bounds
+- Audio source must be placed logically (not random)
+
+MATERIAL MAPPING:
+- wood → medium absorption
+- concrete → reflective
+- fabric → high absorption
+- glass → reflective
+
+=====================
+THINKING PROCESS (INTERNAL ONLY)
+=====================
+1. Estimate RT60
+2. Define room proportions
+3. Build structural shell
+4. Add acoustic treatment
+5. Validate geometry
+
+DO NOT OUTPUT THIS THINKING.
+
+=====================
+OUTPUT FORMAT
+=====================
+
+Return ONLY valid JSON.
+
+{{
+    "metadata": {{
+        "name": "{room_name}",
+        "rt60_estimate_ms": int,
+        "acoustic_profile": "dry | balanced | reverberant"
+    }},
+    "geometry": {{
+        "width": float,
+        "height": float,
+        "depth": float
+    }},
+    "entities": [
         {{
-            "metadata": {{ 
-                "name": "{room_name}", 
-                "audio_report": "Твоят анализ на акустиката на български",
-                "rt60_estimate_ms": int 
-            }},
-            "geometry": {{ "width": float, "height": float, "depth": float }},
-            "entities": [
-                {{
-                    "type": "wall|floor|ceiling|pillar|audio_source|acoustic_panel",
-                    "position": {{ "x": float, "y": float, "z": float }},
-                    "rotation": {{ "x": float, "y": float, "z": float }},
-                    "scale": {{ "x": float, "y": float, "z": float }},
-                    "material": "string"
-                }}
-            ]
+            "type": "wall|floor|ceiling|pillar|audio_source|acoustic_panel",
+            "position": {{ "x": float, "y": float, "z": float }},
+            "rotation": {{ "x": float, "y": float, "z": float }},
+            "scale": {{ "x": float, "y": float, "z": float }},
+            "material": "string"
         }}
-        """
+    ]
+}}
+"""
         prompt_parts.append(main_prompt)
 
         # 3. ГЕНЕРИРАНЕ
