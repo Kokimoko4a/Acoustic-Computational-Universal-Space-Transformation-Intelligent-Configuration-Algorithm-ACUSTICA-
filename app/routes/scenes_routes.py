@@ -103,7 +103,7 @@ def generate_scene():
         scene_id = db_manager.addScene(Audio, label, ai_data, User)
 
 
-        ai_prompt = generate_scene_prompt(scene_id, audio_url)
+        ai_prompt = generate_scene_prompt(scene_id, label)
 
 
         return jsonify({
@@ -122,8 +122,9 @@ def generate_scene():
 
 
 
-def generate_scene_prompt(scene_id, audio_url):
-    # Пример как ще го ползваш:
+def generate_scene_prompt(scene_id, scene_label):
+ 
+# Пример как ще го ползваш:
 # generator = SceneGenerator(YOUR_API_KEY)
 # file_content = generator.create_3d_file_content(data_from_db)
 # upload_to_cloud(file_content, "scene_123.json")
@@ -134,7 +135,7 @@ def generate_scene_prompt(scene_id, audio_url):
 
  scene_settings = db_manager.get_scene_settings_by_id(scene_id)
 
- ai_generated_prompt = generator.create_3d_file_content(scene_settings, audio_url) # THIS NEEDS FIXING.
+ ai_generated_prompt = generator.generate_plan(scene_settings, scene_label) # THIS NEEDS TESTING.
 
  return ai_generated_prompt
 
