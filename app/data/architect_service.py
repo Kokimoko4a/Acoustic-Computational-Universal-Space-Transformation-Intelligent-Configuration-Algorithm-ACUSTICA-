@@ -4,6 +4,8 @@ import requests
 import tempfile
 import os
 import google.generativeai as genai
+import json
+import re
 
 class SceneGenerator:
     """
@@ -18,6 +20,22 @@ class SceneGenerator:
         # Използваме пълното системно име на модела, за да избегнем 404 грешки в v1beta
         self.model_name = 'models/gemini-flash-lite-latest'
         self.model = genai.GenerativeModel(self.model_name)
+
+
+
+    def _sanitize_output(self, text):
+
+        text = re.sub(r"```json", "", text)
+        text = re.sub(r"```", "", text)
+
+        # намира JSON частта
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        if not match:
+            raise ValueError("No JSON found in response")
+
+        json_str = match.group(0)
+
+        return json.loads(json_str)
 
 
 
@@ -88,6 +106,7 @@ class SceneGenerator:
 
         response = self.model.generate_content(prompt)
         return self._sanitize_output(response.text) # THIS NEED TESTING
+
 
 
   

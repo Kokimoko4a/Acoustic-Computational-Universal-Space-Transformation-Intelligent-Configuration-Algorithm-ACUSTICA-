@@ -9,7 +9,7 @@ from routes.scenes_routes import scenes_bp
 
 app = Flask(__name__)
 
-# 2. Активирай CORS за цялото приложение
+# 2. Активирай CORS за ця
 CORS(app) 
 
 app.register_blueprint(user_bp)
