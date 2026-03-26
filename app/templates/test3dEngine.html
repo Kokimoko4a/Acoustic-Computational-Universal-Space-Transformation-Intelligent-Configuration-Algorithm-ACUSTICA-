@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>3D Scene from JSON</title>
+  <style>
+    body { margin: 0; }
+  </style>
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158/build/three.min.js"></script>
+
+<script>
+// 🎯 1. JSON (това по-късно ще идва от AI)
+const sceneData = {
+  objects: [
+    { type: "box", position: [0, 0, 0], size: [10, 1, 10] },   // сцена
+    { type: "box", position: [-6, 3, 0], size: [1, 6, 1] },    // ляв стълб
+    { type: "box", position: [6, 3, 0], size: [1, 6, 1] },     // десен стълб
+    { type: "box", position: [0, 6, 0], size: [12, 1, 1] }     // горна греда
+  ]
+};
+
+// 🎯 2. Three.js setup
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// 🎯 3. Светлина
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(10, 10, 10);
+scene.add(light);
+
+// 🎯 4. Генериране от JSON
+sceneData.objects.forEach(obj => {
+  if (obj.type === "stage") {
+    const geometry = new THREE.BoxGeometry(20, 1, 10);
+    const material = new THREE.MeshStandardMaterial({ color: 0x444444 });
+    const stage = new THREE.Mesh(geometry, material);
+    stage.position.set(0, 0, 0);
+    scene.add(stage);
+  }
+
+  if (obj.type === "truss") {
+    for (let i = -obj.width/2; i <= obj.width/2; i += 2) {
+      const geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+      const material = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
+      const cube = new THREE.Mesh(geometry, material);
+      cube.position.set(i, obj.position[1], obj.position[2]);
+      scene.add(cube);
+    }
+  }
+
+  if (obj.type === "speaker_array") {
+    for (let i = 0; i < 5; i++) {
+      const geometry = new THREE.BoxGeometry(1, 1.5, 1);
+      const material = new THREE.MeshStandardMaterial({ color: 0x111111 });
+      const speaker = new THREE.Mesh(geometry, material);
+      speaker.position.set(
+        obj.position[0],
+        obj.position[1] - i * 1.6,
+        obj.position[2]
+      );
+      scene.add(speaker);
+    }
+  }
+});
+
+// 🎯 5. Камера
+camera.position.z = 20;
+camera.position.y = 5;
+
+// 🎯 6. Render loop
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+
+</script>
+
+</body>
+</html>
